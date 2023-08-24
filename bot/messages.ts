@@ -17,6 +17,10 @@ import { MainContext } from './start';
 import { UserDocument } from '../models/user'
 import { Telegraf } from 'telegraf';
 import { I18nContext } from '@grammyjs/i18n';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 
 const startMessage = async (ctx: MainContext) => {
   try {
@@ -387,7 +391,7 @@ const onGoingTakeBuyMessage = async (
   order,
   i18nBuyer: I18nContext,
   i18nSeller: I18nContext,
-  rate
+  rate: string,
 ) => {
   try {
     await bot.telegram.sendMessage(
@@ -579,7 +583,7 @@ const publishBuyOrderMessage = async (
   user: UserDocument,
   order,
   i18n: I18nContext,
-  messageToUser
+  messageToUser: boolean
 ) => {
   try {
     let publishMessage = `⚡️🍊⚡️\n${order.description}\n`;
@@ -640,7 +644,7 @@ const publishSellOrderMessage = async (
   }
 };
 
-const customMessage = async (ctx: MainContext, message) => {
+const customMessage = async (ctx: MainContext, message: string) => {
   try {
     await ctx.reply(message, { parse_mode: 'MarkdownV2' });
   } catch (error) {
@@ -719,7 +723,7 @@ const helpMessage = async (ctx: MainContext) => {
   }
 };
 
-const mustBeGreatherEqThan = async (ctx: MainContext,  fieldName, qty) => {
+const mustBeGreatherEqThan = async (ctx: MainContext,  fieldName: string, qty: number) => {
   try {
     await ctx.reply(
       ctx.i18n.t('must_be_gt_or_eq', {
@@ -1164,7 +1168,7 @@ const priceApiFailedMessage = async (ctx: MainContext, bot: Telegraf<MainContext
   }
 };
 
-const updateUserSettingsMessage = async (ctx: MainContext,  field, newState) => {
+const updateUserSettingsMessage = async (ctx: MainContext,  field: string, newState: string) => {
   try {
     await ctx.reply(
       ctx.i18n.t('update_user_setting', {
@@ -1204,8 +1208,8 @@ const tooManyPendingOrdersMessage = async (ctx: MainContext, user: UserDocument,
 const wizardAddInvoiceInitMessage = async (
   ctx: MainContext,
   order,
-  currency,
-  expirationTime
+  currency: string,
+  expirationTime: number
 ) => {
   try {
     await ctx.reply(
@@ -1267,7 +1271,7 @@ const sendMeAnInvoiceMessage = async (ctx: MainContext,  amount: number, i18nCtx
   }
 };
 
-const wizardAddFiatAmountMessage = async (ctx: MainContext,  currency, action, order) => {
+const wizardAddFiatAmountMessage = async (ctx: MainContext,  currency: string, action, order) => {
   try {
     await ctx.reply(
       ctx.i18n.t('wizard_add_fiat_amount', {
@@ -1297,7 +1301,7 @@ const wizardAddFiatAmountWrongAmountMessage = async (ctx: MainContext,  order) =
   }
 };
 
-const wizardAddFiatAmountCorrectMessage = async (ctx: MainContext,  currency, fiatAmount) => {
+const wizardAddFiatAmountCorrectMessage = async (ctx: MainContext, currency, fiatAmount: number) => {
   try {
     await ctx.reply(
       ctx.i18n.t('wizard_add_fiat_correct_amount', {
@@ -1532,7 +1536,7 @@ const currencyNotSupportedMessage = async (ctx: MainContext,  currencies) => {
   }
 };
 
-const notAuthorized = async (ctx: MainContext,  tgId) => {
+const notAuthorized = async (ctx: MainContext, tgId: string) => {
   try {
     if (tgId) {
       await ctx.telegram.sendMessage(tgId, ctx.i18n.t('not_authorized'));
@@ -1552,7 +1556,7 @@ const mustBeANumber = async (ctx: MainContext) => {
   }
 };
 
-const showConfirmationButtons = async (ctx: MainContext,  orders, commandString) => {
+const showConfirmationButtons = async (ctx: MainContext,  orders, commandString: string) => {
   try {
     commandString = commandString.slice(1);
     const inlineKeyboard = [];
