@@ -110,7 +110,7 @@ const invoicePaymentRequestMessage = async (
 const pendingSellMessage = async (ctx: MainContext, user: UserDocument, order: IOrder, channel: string, i18n: I18nContext) => {
   try {
     const orderExpirationWindow =
-      process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW / 60 / 60;
+      Number(process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW) / 60 / 60;
     await ctx.telegram.sendMessage(
       user.tg_id,
       i18n.t('pending_sell', {
@@ -131,7 +131,7 @@ const pendingSellMessage = async (ctx: MainContext, user: UserDocument, order: I
 const pendingBuyMessage = async (bot: Telegraf<MainContext>, user: UserDocument, order: IOrder, channel: string, i18n: I18nContext) => {
   try {
     const orderExpirationWindow =
-      process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW / 60 / 60;
+      Number(process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW) / 60 / 60;
     await bot.telegram.sendMessage(
       user.tg_id,
       i18n.t('pending_buy', {
@@ -1112,9 +1112,9 @@ const showInfoMessage = async (ctx: MainContext, user: UserDocument, config: ICo
   try {
     const status = config.node_status == 'up' ? '🟢' : '🔴';
     const node_uri = sanitizeMD(config.node_uri);
-    let bot_fee = (process.env.MAX_FEE * 100).toString() + '%';
+    let bot_fee = (Number(process.env.MAX_FEE) * 100).toString() + '%';
     bot_fee = bot_fee.replace('.', '\\.');
-    let routing_fee = (process.env.MAX_ROUTING_FEE * 100).toString() + '%';
+    let routing_fee = (Number(process.env.MAX_ROUTING_FEE) * 100).toString() + '%';
     routing_fee = routing_fee.replace('.', '\\.');
     await ctx.telegram.sendMessage(
       user.tg_id,
@@ -1317,7 +1317,7 @@ const expiredOrderMessage = async (bot: Telegraf<MainContext>, order: IOrder, bu
   try {
     const detailedOrder = getDetailedOrder(i18n, order, buyerUser, sellerUser);
     await bot.telegram.sendMessage(
-      process.env.ADMIN_CHANNEL,
+      String(process.env.ADMIN_CHANNEL),
       i18n.t('expired_order', {
         detailedOrder,
         buyerUser,
@@ -1382,7 +1382,7 @@ const toAdminChannelBuyerDidntAddInvoiceMessage = async (
 ) => {
   try {
     await bot.telegram.sendMessage(
-      process.env.ADMIN_CHANNEL,
+      String(process.env.ADMIN_CHANNEL),
       i18n.t('buyer_havent_add_invoice_to_admin_channel', {
         orderId: order._id,
         username: user.username,
@@ -1423,7 +1423,7 @@ const toAdminChannelSellerDidntPayInvoiceMessage = async (
 ) => {
   try {
     await bot.telegram.sendMessage(
-      process.env.ADMIN_CHANNEL,
+      String(process.env.ADMIN_CHANNEL),
       i18n.t('seller_havent_add_invoice_to_admin_channel', {
         orderId: order._id,
         username: user.username,
@@ -1444,7 +1444,7 @@ const toAdminChannelPendingPaymentSuccessMessage = async (
 ) => {
   try {
     await bot.telegram.sendMessage(
-      process.env.ADMIN_CHANNEL,
+      String(process.env.ADMIN_CHANNEL),
       i18n.t('pending_payment_success_to_admin', {
         orderId: order._id,
         username: user.username,
@@ -1514,7 +1514,7 @@ const toAdminChannelPendingPaymentFailedMessage = async (
 ) => {
   try {
     await bot.telegram.sendMessage(
-      process.env.ADMIN_CHANNEL,
+      String(process.env.ADMIN_CHANNEL),
       i18n.t('pending_payment_failed_to_admin', {
         attempts: pending.attempts,
         orderId: order._id,
