@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
 const logger = require('./logger');
 
 // connect to database
@@ -12,12 +12,13 @@ if (!MONGO_URI) {
   throw new Error('You must provide a MongoDB URI');
 }
 logger.info(`Connecting to: ${MONGO_URI}`);
+// TODO: Update mongoose to latest version
 const connect = () => {
   mongoose.connect(MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-  });
+  } as any); // older version of mongoose that does not have the ConnectOptions type defined.
   return mongoose;
 };
 
-module.exports = connect;
+export default connect;

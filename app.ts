@@ -1,7 +1,8 @@
-require('dotenv').config();
-const { SocksProxyAgent } = require('socks-proxy-agent');
-const { start } = require('./bot');
-const mongoConnect = require('./db_connect');
+import * as dotenv from "dotenv";
+dotenv.config()
+const SocksProxyAgent = require('socks-proxy-agent') 
+import { start } from "./bot/start";
+import mongoConnect from './db_connect'
 const { resubscribeInvoices } = require('./ln');
 const logger = require('./logger');
 const { delay } = require('./util');
@@ -30,12 +31,13 @@ const { delay } = require('./util');
           telegram: {
             agent,
           },
-        };
+        } as any;
       }
-      const bot = start(process.env.BOT_TOKEN, options);
+      const bot = start(String(process.env.BOT_TOKEN), options);
       // Wait 1 seconds before try to resubscribe hold invoices
       await delay(1000);
       await resubscribeInvoices(bot);
     })
-    .on('error', error => logger.error(`Error connecting to Mongo: ${error}`));
+    .on('error', (error: Error) => logger.error(`Error connecting to Mongo: ${error}`));
 })();
+
