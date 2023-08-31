@@ -1,6 +1,6 @@
-const { TelegramError } = require('telegraf');
-const QR = require('qrcode');
-const {
+import { TelegramError } from 'telegraf'
+import QR from 'qrcode';
+import {
   getCurrency,
   numberFormat,
   getDetailedOrder,
@@ -11,8 +11,8 @@ const {
   getEmojiRate,
   decimalRound,
   getUserAge,
-} = require('../util');
-const logger = require('../logger');
+} from '../util';
+import logger from "../logger";
 import { MainContext } from './start';
 import { UserDocument } from '../models/user'
 import { IOrder } from '../models/order'
@@ -70,7 +70,8 @@ const invoicePaymentRequestMessage = async (
 ) => {
   try {
     let currency = getCurrency(order.fiat_code);
-    currency =
+    if (!(currency instanceof Object)) return;
+    let currencyStr =
       !!currency && !!currency.symbol_native
         ? currency.symbol_native
         : order.fiat_code;
@@ -84,7 +85,7 @@ const invoicePaymentRequestMessage = async (
     const ageInDays = getUserAge(buyer);
 
     const message = i18n.t('invoice_payment_request', {
-      currency,
+      currencyStr,
       order,
       expirationTime,
       rate,
@@ -107,18 +108,18 @@ const invoicePaymentRequestMessage = async (
   }
 };
 
-const pendingSellMessage = async (ctx: MainContext, user: UserDocument, order: IOrder, channel: string, i18n: I18nContext) => {
+const pendingSellMessage = async (bot: Telegraf<MainContext>, user: UserDocument, order: IOrder, channel: string, i18n: I18nContext) => {
   try {
     const orderExpirationWindow =
       Number(process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW) / 60 / 60;
-    await ctx.telegram.sendMessage(
+    await bot.telegram.sendMessage(
       user.tg_id,
       i18n.t('pending_sell', {
         channel,
         orderExpirationWindow: Math.round(orderExpirationWindow),
       })
     );
-    await ctx.telegram.sendMessage(
+    await bot.telegram.sendMessage(
       user.tg_id,
       i18n.t('cancel_order_cmd', { orderId: order._id }),
       { parse_mode: 'MarkdownV2' }
@@ -356,7 +357,8 @@ const showHoldInvoiceMessage = async (
 ) => {
   try {
     let currency = getCurrency(fiatCode);
-    currency =
+    if (!(currency instanceof Object)) return;
+    let currencyStr =
       !!currency && !!currency.symbol_native
         ? currency.symbol_native
         : fiatCode;
@@ -364,7 +366,7 @@ const showHoldInvoiceMessage = async (
       ctx.i18n.t('pay_invoice', {
         amount: numberFormat(fiatCode, amount),
         fiatAmount: numberFormat(fiatCode, fiatAmount),
-        currency,
+        currencyStr,
       })
     );
     // Create QR code
@@ -593,6 +595,7 @@ const publishBuyOrderMessage = async (
     publishMessage += `:${order._id}:`;
 
     const channel = await getOrderChannel(order);
+    if (channel === undefined) return;
     // We send the message to the channel
     const message1 = await bot.telegram.sendMessage(channel, publishMessage, {
       reply_markup: {
@@ -616,7 +619,7 @@ const publishBuyOrderMessage = async (
 };
 
 const publishSellOrderMessage = async (
-  ctx: MainContext,
+  bot: Telegraf<MainContext>,
   user: UserDocument,
   order: IOrder,
   i18n: I18nContext,
@@ -626,8 +629,9 @@ const publishSellOrderMessage = async (
     let publishMessage = `⚡️🍊⚡️\n${order.description}\n`;
     publishMessage += `:${order._id}:`;
     const channel = await getOrderChannel(order);
+    if (channel === undefined) return;
     // We send the message to the channel
-    const message1 = await ctx.telegram.sendMessage(channel, publishMessage, {
+    const message1 = await bot.telegram.sendMessage(channel, publishMessage, {
       reply_markup: {
         inline_keyboard: [
           [{ text: i18n.t('buy_sats'), callback_data: 'takesell' }],
@@ -641,7 +645,7 @@ const publishSellOrderMessage = async (
     await order.save();
     // Message to user let know the order was published
     if (messageToUser)
-      await pendingSellMessage(ctx, user, order, channel, i18n);
+      await pendingSellMessage(bot, user, order, channel, i18n);
   } catch (error) {
     logger.error(error);
   }
@@ -658,6 +662,7 @@ const customMessage = async (ctx: MainContext, message: string) => {
 const checkOrderMessage = async (ctx: MainContext, order: IOrder, buyer: UserDocument, seller: UserDocument) => {
   try {
     let message = getDetailedOrder(ctx.i18n, order, buyer, seller);
+    if (message === undefined) return;
     message += `\n\n`;
     await ctx.reply(message, { parse_mode: 'MarkdownV2' });
   } catch (error) {
@@ -665,7 +670,7 @@ const checkOrderMessage = async (ctx: MainContext, order: IOrder, buyer: UserDoc
   }
 };
 
-const checkInvoiceMessage = async (ctx: MainContext, isConfirmed: boolean, isCanceled: boolean, isHeld: boolean) => {
+const checkInvoiceMessage = async (ctx: MainContext, isConfirmed: boolean, isCanceled: boolean | undefined, isHeld: boolean | undefined) => {
   try {
     if (isConfirmed) {
       return await ctx.reply(ctx.i18n.t('invoice_settled'));
@@ -1539,7 +1544,7 @@ const currencyNotSupportedMessage = async (ctx: MainContext, currencies: Array<s
   }
 };
 
-const notAuthorized = async (ctx: MainContext, tgId: string) => {
+const notAuthorized = async (ctx: MainContext, tgId: string | undefined) => {
   try {
     if (tgId) {
       await ctx.telegram.sendMessage(tgId, ctx.i18n.t('not_authorized'));
@@ -1596,7 +1601,7 @@ const showConfirmationButtons = async (ctx: MainContext, orders: Array<IOrder>, 
   }
 };
 
-module.exports = {
+export {
   startMessage,
   initBotErrorMessage,
   invoicePaymentRequestMessage,
