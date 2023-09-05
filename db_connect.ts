@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-const logger = require('./logger');
+import logger from "./logger";
 
 // connect to database
 const credentials = process.env.DB_USER

@@ -1,10 +1,10 @@
 import * as dotenv from "dotenv";
 dotenv.config()
-const SocksProxyAgent = require('socks-proxy-agent') 
+import { SocksProxyAgent } from "socks-proxy-agent";
 import { start } from "./bot/start";
 import mongoConnect from './db_connect'
 const { resubscribeInvoices } = require('./ln');
-const logger = require('./logger');
+import logger from "./logger";
 const { delay } = require('./util');
 
 (async () => {

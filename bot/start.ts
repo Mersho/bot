@@ -256,7 +256,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
         throw new Error(ctxUpdateAssertMsg);
       }
       const params = ctx.update.message.text.split(' ');
-      const [command, orderId] = params.filter((el) => el);
+      const [command, orderId] = params.filter((el: string) => el);
 
       if (!orderId) {
         const orders = await askForConfirmation(ctx.user, command);
@@ -347,7 +347,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
         throw new Error(ctxUpdateAssertMsg);
       }
       const params = ctx.update.message.text.split(' ');
-      const [command, orderId] = params.filter((el) => el);
+      const [command, orderId] = params.filter((el: string) => el);
 
       if (!orderId) {
         const orders = await askForConfirmation(ctx.user, command);
@@ -515,7 +515,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
         throw new Error(ctxUpdateAssertMsg);
       }
       const params = ctx.update.message.text.split(' ');
-      const [command, orderId] = params.filter((el) => el);
+      const [command, orderId] = params.filter((el: string) => el);
 
       if (!orderId) {
         const orders = await askForConfirmation(ctx.user, command);

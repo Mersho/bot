@@ -1,16 +1,20 @@
-const {
+import { AuthenticatedLnd } from "lightning";
+import { Telegraf } from "telegraf";
+import { MainContext } from "../bot/start";
+import { IOrder } from "../models/order";
+import {
   payViaPaymentRequest,
   getPayment,
-  deleteForwardingReputations,
-} = require('lightning');
+  deleteForwardingReputations
+} from "lightning";
 const { parsePaymentRequest } = require('invoices');
 const { User, PendingPayment } = require('../models');
-const lnd = require('./connect');
+import { lnd } from "./connect";
 const { handleReputationItems, getUserI18nContext } = require('../util');
 const messages = require('../bot/messages');
-const logger = require('../logger');
+import logger from "../logger";
 
-const payRequest = async ({ request, amount }) => {
+const payRequest = async ({ request, amount }: { request: string; amount: number }) => {
   try {
     const invoice = parsePaymentRequest({ request });
     if (!invoice) return false;
@@ -18,9 +22,17 @@ const payRequest = async ({ request, amount }) => {
     if (invoice.is_expired) return invoice;
 
     // We need to set a max fee amount
-    const maxFee = amount * parseFloat(process.env.MAX_ROUTING_FEE);
+    const maxFee = amount * Number(process.env.MAX_ROUTING_FEE);
 
-    const params = {
+    type Params = {
+      lnd: AuthenticatedLnd;
+      request: string;
+      pathfinding_timeout: number;
+      max_fee?: number; // optional property
+      tokens?: number; // optional property
+    };
+
+    const params: Params = {
       lnd,
       request,
       pathfinding_timeout: 60000,
@@ -44,7 +56,7 @@ const payRequest = async ({ request, amount }) => {
   }
 };
 
-const payToBuyer = async (bot, order) => {
+const payToBuyer = async (bot: Telegraf<MainContext>, order: IOrder) => {
   try {
     // We check if the payment is on flight we don't do anything
     const isPending = await isPendingPayment(order.buyer_invoice);
@@ -99,14 +111,14 @@ const payToBuyer = async (bot, order) => {
   }
 };
 
-const isPendingPayment = async request => {
+const isPendingPayment = async (request: string) => {
   try {
     const { id } = parsePaymentRequest({ request });
     const { is_pending } = await getPayment({ lnd, id });
 
     return !!is_pending;
   } catch (error) {
-    const message = error.toString();
+    const message = String(error);
     logger.error(`isPendingPayment catch error: ${message}`);
     return false;
   }

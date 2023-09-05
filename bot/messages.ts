@@ -1,4 +1,4 @@
-const { TelegramError } = require('telegraf');
+import { TelegramError } from 'telegraf'
 const QR = require('qrcode');
 const {
   getCurrency,
