@@ -66,7 +66,7 @@ const {
   deleteCommunity,
   nodeInfo,
 } = require('../jobs');
-const logger = require('../logger');
+import logger from "../logger";
 
 export interface MainContext extends Context {
   match: Array<string> | null;

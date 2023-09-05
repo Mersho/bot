@@ -1,13 +1,15 @@
-const { subscribeToInvoice } = require('lightning');
+import { Telegraf } from "telegraf";
+import { MainContext } from "../bot/start";
+import {subscribeToInvoice} from 'lightning'
 const { Order, User } = require('../models');
 const { payToBuyer } = require('./pay_request');
-const lnd = require('./connect');
+import { lnd } from "./connect";
 const messages = require('../bot/messages');
 const ordersActions = require('../bot/ordersActions');
 const { getUserI18nContext, getEmojiRate, decimalRound } = require('../util');
-const logger = require('../logger');
+import logger from "../logger";
 
-const subscribeInvoice = async (bot, id, resub) => {
+const subscribeInvoice = async (bot: Telegraf<MainContext>, id: string, resub: boolean) => {
   try {
     const sub = subscribeToInvoice({ id, lnd });
     sub.on('invoice_updated', async invoice => {

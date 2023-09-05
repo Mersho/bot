@@ -1,8 +1,11 @@
+import { Telegraf } from "telegraf";
+import { MainContext } from "../bot/start";
+
 const { Config } = require('../models');
 const { getInfo } = require('../ln');
-const logger = require('../logger');
+import logger from "../logger";
 
-const info = async bot => {
+const info = async (bot: Telegraf<MainContext>) => {
   try {
     const config = await Config.findOne({});
     const info = await getInfo();
@@ -12,7 +15,7 @@ const info = async bot => {
     config.node_uri = info.uris[0];
     await config.save();
   } catch (error) {
-    const message = error.toString();
+    const message = String(error);
     logger.error(`node info catch error: ${message}`);
   }
 };

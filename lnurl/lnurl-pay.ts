@@ -1,5 +1,5 @@
 import axios from 'axios';
-const logger = require('../logger');
+import logger from "../logger";
 
 // {
 //	pr: String, // bech32-serialized lightning invoice
