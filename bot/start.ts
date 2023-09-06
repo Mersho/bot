@@ -3,9 +3,8 @@ import { I18n, I18nContext } from '@grammyjs/i18n';
 import { Message } from 'typegram'
 import { UserDocument } from '../models/user'
 import { FilterQuery } from 'mongoose';
-
-const { limit } = require('@grammyjs/ratelimiter');
-const schedule = require('node-schedule');
+import { limit } from "@grammyjs/ratelimiter"
+import schedule from 'node-schedule';
 const {
   Order,
   User,
@@ -75,7 +74,7 @@ export interface MainContext extends Context {
   admin: UserDocument;
 }
 
-interface OrderQuery {
+export interface OrderQuery {
   status?: string;
   buyer_id?: string;
   seller_id?: string;
@@ -137,7 +136,7 @@ has the same condition.
 The problem mentioned above is similar to this issue:
 https://github.com/telegraf/telegraf/issues/1319#issuecomment-766360594
 */
-const ctxUpdateAssertMsg = "ctx.update.message.text is not available.";
+export const ctxUpdateAssertMsg = "ctx.update.message.text is not available.";
 
 const initialize = (botToken: string, options: Partial<Telegraf.Options<MainContext>>): Telegraf<MainContext> => {
   const i18n = new I18n({

@@ -1,5 +1,5 @@
 import { TelegramError } from 'telegraf'
-const QR = require('qrcode');
+import QR from 'qrcode';
 const {
   getCurrency,
   numberFormat,

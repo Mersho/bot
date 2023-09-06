@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import path = require('path');
+import * as path from 'path';
 import * as lightning from "lightning";
 import logger from "../logger";
 
