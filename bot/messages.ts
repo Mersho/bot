@@ -1,6 +1,6 @@
 import { TelegramError } from 'telegraf'
 import QR from 'qrcode';
-const {
+import {
   getCurrency,
   numberFormat,
   getDetailedOrder,
@@ -11,7 +11,7 @@ const {
   getEmojiRate,
   decimalRound,
   getUserAge,
-} = require('../util');
+} from '../util';
 import logger from "../logger";
 import { MainContext } from './start';
 import { UserDocument } from '../models/user'
@@ -70,7 +70,8 @@ const invoicePaymentRequestMessage = async (
 ) => {
   try {
     let currency = getCurrency(order.fiat_code);
-    currency =
+    if (!(currency instanceof Object)) return;
+    let currencyStr =
       !!currency && !!currency.symbol_native
         ? currency.symbol_native
         : order.fiat_code;
@@ -84,7 +85,7 @@ const invoicePaymentRequestMessage = async (
     const ageInDays = getUserAge(buyer);
 
     const message = i18n.t('invoice_payment_request', {
-      currency,
+      currencyStr,
       order,
       expirationTime,
       rate,
@@ -356,7 +357,8 @@ const showHoldInvoiceMessage = async (
 ) => {
   try {
     let currency = getCurrency(fiatCode);
-    currency =
+    if (!(currency instanceof Object)) return;
+    let currencyStr =
       !!currency && !!currency.symbol_native
         ? currency.symbol_native
         : fiatCode;
@@ -364,7 +366,7 @@ const showHoldInvoiceMessage = async (
       ctx.i18n.t('pay_invoice', {
         amount: numberFormat(fiatCode, amount),
         fiatAmount: numberFormat(fiatCode, fiatAmount),
-        currency,
+        currencyStr,
       })
     );
     // Create QR code
@@ -593,6 +595,7 @@ const publishBuyOrderMessage = async (
     publishMessage += `:${order._id}:`;
 
     const channel = await getOrderChannel(order);
+    if (channel === undefined) return;
     // We send the message to the channel
     const message1 = await bot.telegram.sendMessage(channel, publishMessage, {
       reply_markup: {
@@ -626,6 +629,7 @@ const publishSellOrderMessage = async (
     let publishMessage = `⚡️🍊⚡️\n${order.description}\n`;
     publishMessage += `:${order._id}:`;
     const channel = await getOrderChannel(order);
+    if (channel === undefined) return;
     // We send the message to the channel
     const message1 = await bot.telegram.sendMessage(channel, publishMessage, {
       reply_markup: {
@@ -658,6 +662,7 @@ const customMessage = async (ctx: MainContext, message: string) => {
 const checkOrderMessage = async (ctx: MainContext, order: IOrder, buyer: UserDocument, seller: UserDocument) => {
   try {
     let message = getDetailedOrder(ctx.i18n, order, buyer, seller);
+    if (message === undefined) return;
     message += `\n\n`;
     await ctx.reply(message, { parse_mode: 'MarkdownV2' });
   } catch (error) {
@@ -665,7 +670,7 @@ const checkOrderMessage = async (ctx: MainContext, order: IOrder, buyer: UserDoc
   }
 };
 
-const checkInvoiceMessage = async (ctx: MainContext, isConfirmed: boolean, isCanceled: boolean, isHeld: boolean) => {
+const checkInvoiceMessage = async (ctx: MainContext, isConfirmed: boolean, isCanceled: boolean | undefined, isHeld: boolean | undefined) => {
   try {
     if (isConfirmed) {
       return await ctx.reply(ctx.i18n.t('invoice_settled'));

@@ -40,14 +40,14 @@ const {
   fiatSent,
   release,
 } = require('./commands');
-const {
+import {
   settleHoldInvoice,
   cancelHoldInvoice,
   payToBuyer,
   isPendingPayment,
   subscribeInvoice,
   getInvoice,
-} = require('../ln');
+} from '../ln';
 const {
   validateUser,
   validateParams,
@@ -475,6 +475,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
       if (!order.hash) return;
 
       const invoice = await getInvoice({ hash: order.hash });
+      if (invoice === undefined) return;
 
       await messages.checkInvoiceMessage(
         ctx,
