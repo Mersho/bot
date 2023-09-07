@@ -33,4 +33,4 @@ const deleteOrders = async (bot: Telegraf<MainContext>) => {
   }
 };
 
-module.exports = deleteOrders;
+export default deleteOrders;

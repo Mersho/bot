@@ -1,15 +1,17 @@
-const { User, Order } = require('../models');
+import { Telegraf } from "telegraf";
+import { MainContext } from "../bot/start";
+import { User, Order } from "../models";
 const { cancelShowHoldInvoice, cancelAddInvoice } = require('../bot/commands');
-const messages = require('../bot/messages');
-const { getUserI18nContext, holdInvoiceExpirationInSecs } = require('../util');
-const logger = require('../logger');
+import * as messages from "../bot/messages";
+import { getUserI18nContext, holdInvoiceExpirationInSecs } from '../util';
+import logger from "../logger";
 
-const cancelOrders = async bot => {
+const cancelOrders = async (bot: Telegraf<MainContext>) => {
   try {
     const holdInvoiceTime = new Date();
     holdInvoiceTime.setSeconds(
       holdInvoiceTime.getSeconds() -
-        parseInt(process.env.HOLD_INVOICE_EXPIRATION_WINDOW)
+      Number(process.env.HOLD_INVOICE_EXPIRATION_WINDOW)
     );
     // We get the orders where the seller didn't pay the hold invoice before expired
     // or where the buyer didn't add the invoice
@@ -45,22 +47,22 @@ const cancelOrders = async bot => {
     for (const order of activeOrders) {
       const buyerUser = await User.findOne({ _id: order.buyer_id });
       const sellerUser = await User.findOne({ _id: order.seller_id });
-      const i18nCtxBuyer = await getUserI18nContext(buyerUser);
-      const i18nCtxSeller = await getUserI18nContext(sellerUser);
+      const i18nCtxBuyer = await getUserI18nContext(buyerUser!);
+      const i18nCtxSeller = await getUserI18nContext(sellerUser!);
       // Instead of cancel this order we should send this to the admins
       // and they decide what to do
       await messages.expiredOrderMessage(
         bot,
         order,
-        buyerUser,
-        sellerUser,
+        buyerUser!,
+        sellerUser!,
         i18nCtxBuyer
       );
       // We send messages about the expired order to each party
-      await messages.toBuyerExpiredOrderMessage(bot, buyerUser, i18nCtxBuyer);
+      await messages.toBuyerExpiredOrderMessage(bot, buyerUser!, i18nCtxBuyer);
       await messages.toSellerExpiredOrderMessage(
         bot,
-        sellerUser,
+        sellerUser!,
         i18nCtxSeller
       );
       order.admin_warned = true;
@@ -70,7 +72,7 @@ const cancelOrders = async bot => {
     // Now we cancel orders expired
     // ==============================
     orderTime = new Date();
-    let orderExpirationTime = parseInt(
+    let orderExpirationTime = Number(
       process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW
     );
     orderExpirationTime = orderExpirationTime + orderExpirationTime * 0.2;
@@ -96,4 +98,4 @@ const cancelOrders = async bot => {
   }
 };
 
-module.exports = cancelOrders;
+export default cancelOrders;

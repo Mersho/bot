@@ -42,4 +42,4 @@ const calculateEarnings = async () => {
   }
 };
 
-module.exports = calculateEarnings;
+export default calculateEarnings;

@@ -7,7 +7,7 @@ import { Telegraf } from 'telegraf';
 import { I18nContext } from '@grammyjs/i18n';
 import { MainContext } from '../bot/start';
 
-exports.attemptPendingPayments = async (bot: Telegraf<MainContext>): Promise<void> => {
+export const attemptPendingPayments = async (bot: Telegraf<MainContext>): Promise<void> => {
   const pendingPayments = await PendingPayment.find({
     paid: false,
     attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
@@ -115,7 +115,7 @@ exports.attemptPendingPayments = async (bot: Telegraf<MainContext>): Promise<voi
   }
 };
 
-exports.attemptCommunitiesPendingPayments = async (bot: Telegraf<MainContext>): Promise<void> => {
+export const attemptCommunitiesPendingPayments = async (bot: Telegraf<MainContext>): Promise<void> => {
   const pendingPayments = await PendingPayment.find({
     paid: false,
     attempts: { $lt: process.env.PAYMENT_ATTEMPTS },

@@ -54,7 +54,7 @@ const getInvoice = async ( hash: string ) => {
   }
 };
 
-module.exports = {
+export {
   createHoldInvoice,
   settleHoldInvoice,
   cancelHoldInvoice,

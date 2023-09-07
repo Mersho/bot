@@ -467,7 +467,7 @@ const getTimeToExpirationOrder = (order: IOrder, i18n: I18nContext) => {
   return `${hours} ${textHour} ${minutes} ${textMin}`;
 };
 
-module.exports = {
+export {
   isIso4217,
   plural,
   getCurrency,

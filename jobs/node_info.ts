@@ -21,4 +21,4 @@ const info = async (bot: Telegraf<MainContext>) => {
   }
 };
 
-module.exports = info;
+export default info;

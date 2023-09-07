@@ -127,4 +127,4 @@ const subscribeInvoice = async (bot: Telegraf<MainContext>, id: string, resub: b
   }
 };
 
-module.exports = subscribeInvoice;
+export default subscribeInvoice;
