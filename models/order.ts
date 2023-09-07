@@ -123,5 +123,4 @@ const orderSchema = new Schema<IOrder>({
   is_public: { type: Boolean, default: true },
 });
 
-const Order = mongoose.model<IOrder>('Order', orderSchema);
-export default Order;
+export default mongoose.model<IOrder>('Order', orderSchema);

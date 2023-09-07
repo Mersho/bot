@@ -82,5 +82,4 @@ const CommunitySchema = new Schema<ICommunity>({
 });
 
 
-const Community = mongoose.model<ICommunity>('Community', CommunitySchema);
-export default Community;
+export default mongoose.model<ICommunity>('Community', CommunitySchema);

@@ -40,5 +40,4 @@ const PendingPaymentSchema = new Schema<IPendingPayment>({
 });
 
 
-const PendingPayment = mongoose.model<IPendingPayment>('PendingPayment', PendingPaymentSchema);
-export default PendingPayment;
+export default mongoose.model<IPendingPayment>('PendingPayment', PendingPaymentSchema);
