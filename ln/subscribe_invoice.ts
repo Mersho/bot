@@ -4,7 +4,7 @@ import {subscribeToInvoice} from 'lightning'
 import { Order, User } from '../models';
 const { payToBuyer } = require('./pay_request');
 import { lnd } from "./connect";
-const messages = require('../bot/messages');
+import * as messages from '../bot/messages';
 const ordersActions = require('../bot/ordersActions');
 const { getUserI18nContext, getEmojiRate, decimalRound } = require('../util');
 import logger from "../logger";
@@ -64,6 +64,7 @@ const subscribeInvoice = async (bot: Telegraf<MainContext>, id: string, resub: b
         await order.save();
         const buyerUser = await User.findOne({ _id: order.buyer_id });
         const sellerUser = await User.findOne({ _id: order.seller_id });
+        if (!buyerUser || !sellerUser) return;
         // We need two i18n contexts to send messages to each user
         const i18nCtxBuyer = await getUserI18nContext(buyerUser);
         const i18nCtxSeller = await getUserI18nContext(sellerUser);

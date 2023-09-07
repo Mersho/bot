@@ -7,7 +7,7 @@ import { Telegraf } from "telegraf";
 
 const { parsePaymentRequest } = require('invoices');
 const { ObjectId } = require('mongoose').Types;
-const messages = require('./messages');
+import * as messages from './messages';
 import { Order, User, Community } from '../models';
 const { isIso4217, isDisputeSolver } = require('../util');
 const { existLightningAddress } = require('../lnurl/lnurl-pay');
@@ -70,7 +70,7 @@ const validateSuperAdmin = async (ctx: MainContext, id?: string) => {  // id is 
     // to that user, so we do nothing
     if (!user) return;
 
-    if (!user.admin) return await messages.notAuthorized(ctx, tgUserId);
+    if (!user.admin) return await messages.notAuthorized(ctx, tgUserId.toString());
 
     return user;
   } catch (error) {
@@ -97,7 +97,7 @@ const validateAdmin = async (ctx: MainContext, id?: string) => {  // id is UNKNO
     const isSolver = isDisputeSolver(community, user);
 
     if (!user.admin && !isSolver)
-      return await messages.notAuthorized(ctx, tgUserId);
+      return await messages.notAuthorized(ctx, tgUserId.toString());
 
     return user;
   } catch (error) {
@@ -154,7 +154,7 @@ const validateSellOrder = async (ctx: MainContext) => {
       await messages.mustBeGreatherEqThan(
         ctx,
         'monto_en_sats',
-        process.env.MIN_PAYMENT_AMT
+        Number(process.env.MIN_PAYMENT_AMT)
       );
       return false;
     }
@@ -240,7 +240,7 @@ const validateBuyOrder = async (ctx: MainContext) => {
       await messages.mustBeGreatherEqThan(
         ctx,
         'monto_en_sats',
-        process.env.MIN_PAYMENT_AMT
+        Number(process.env.MIN_PAYMENT_AMT)
       );
       return false;
     }
@@ -420,7 +420,7 @@ const validateTakeSellOrder = async (ctx: MainContext, bot: Telegraf<MainContext
 const validateTakeBuyOrder = async (ctx: MainContext, bot: Telegraf<MainContext>, user: UserDocument, order: IOrder) => {
   try {
     if (!order) {
-      await messages.invalidOrderMessage(bot, user);
+      await messages.invalidOrderMessage(ctx, bot, user);
       return false;
     }
     if (isOrderCreator(user, order) && process.env.NODE_ENV === 'production') {

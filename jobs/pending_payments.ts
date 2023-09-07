@@ -1,6 +1,6 @@
 const { payRequest, isPendingPayment } = require('../ln');
 import { PendingPayment, Order, User, Community } from '../models';
-const messages = require('../bot/messages');
+import * as messages from '../bot/messages';
 const { getUserI18nContext } = require('../util');
 import logger from "../logger";
 import { Telegraf } from 'telegraf';
