@@ -8,7 +8,7 @@ import { Telegraf } from "telegraf";
 const { parsePaymentRequest } = require('invoices');
 const { ObjectId } = require('mongoose').Types;
 const messages = require('./messages');
-const { Order, User, Community } = require('../models');
+import { Order, User, Community } from '../models';
 const { isIso4217, isDisputeSolver } = require('../util');
 const { existLightningAddress } = require('../lnurl/lnurl-pay');
 const logger = require('../logger');
@@ -638,7 +638,7 @@ const isBannedFromCommunity = async (user: UserDocument, communityId: string) =>
     if (!communityId) return false;
     const community = await Community.findOne({ _id: communityId });
     if (!community) return false;
-    return community.banned_users.some((buser: ICommunity) => buser.id == user._id);
+    return community.banned_users.toObject().some((buser: ICommunity) => buser.id == user._id);
   } catch (error) {
     logger.error(error);
     return false;

@@ -5,14 +5,14 @@ import { UserDocument } from '../models/user'
 import { FilterQuery } from 'mongoose';
 import { limit } from "@grammyjs/ratelimiter"
 import schedule from 'node-schedule';
-const {
+import {
   Order,
   User,
   PendingPayment,
   Community,
   Dispute,
   Config,
-} = require('../models');
+} from '../models';
 const { getCurrenciesWithPrice, deleteOrderFromChannel } = require('../util');
 const {
   commandArgsMiddleware,
@@ -66,6 +66,7 @@ const {
   nodeInfo,
 } = require('../jobs');
 import logger from "../logger";
+import { ICommunity, IUsernameId } from '../models/community';
 
 export interface MainContext extends Context {
   match: Array<string> | null;
@@ -259,7 +260,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
 
       if (!orderId) {
         const orders = await askForConfirmation(ctx.user, command);
-        if (!orders.length) return await ctx.reply(`${command} <order Id>`);
+        if (!orders?.length) return await ctx.reply(`${command} <order Id>`);
 
         return await messages.showConfirmationButtons(ctx, orders, command);
       } else if (!(await validateObjectId(ctx, orderId))) {
@@ -350,7 +351,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
 
       if (!orderId) {
         const orders = await askForConfirmation(ctx.user, command);
-        if (!orders.length) return await ctx.reply(`${command}  <order Id>`);
+        if (!orders?.length) return await ctx.reply(`${command}  <order Id>`);
 
         return await messages.showConfirmationButtons(ctx, orders, command);
       } else if (!(await validateObjectId(ctx, orderId))) {
@@ -518,7 +519,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
 
       if (!orderId) {
         const orders = await askForConfirmation(ctx.user, command);
-        if (!orders.length) return await ctx.reply(`${command} <order Id>`);
+        if (!orders?.length) return await ctx.reply(`${command} <order Id>`);
 
         return await messages.showConfirmationButtons(ctx, orders, command);
       } else if (!(await validateObjectId(ctx, orderId))) {
@@ -556,11 +557,11 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
           const community = await Community.findById(
             ctx.admin.default_community_id
           );
-          community.banned_users.push({
+          community?.banned_users.push({
             id: user._id,
             username: user.username,
           });
-          await community.save();
+          await community?.save();
         } else {
           return await ctx.reply(ctx.i18n.t('need_default_community'));
         }
@@ -599,8 +600,9 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
           const community = await Community.findById(
             ctx.admin.default_community_id
           );
-          community.banned_users = community.banned_users.filter(
-            (el: any) => el.id !== user.id
+          if (!community) return;
+          community.banned_users = community.banned_users.toObject().filter(
+            (el: IUsernameId) => el.id !== user.id
           );
           await community.save();
         } else {

@@ -3,7 +3,7 @@ import { MainContext } from "../bot/start";
 import { getInvoices, GetInvoicesResult } from 'lightning';
 import { lnd } from './connect';
 const subscribeInvoice = require('./subscribe_invoice');
-const { Order } = require('../models');
+import { Order } from '../models';
 import logger from "../logger";
 
 const resubscribeInvoices = async (bot: Telegraf<MainContext>) => {

@@ -1,7 +1,7 @@
 import { Telegraf } from "telegraf";
 import { MainContext } from "../bot/start";
 
-const { Order } = require('../models');
+import { Order } from '../models';
 const { deleteOrderFromChannel } = require('../util');
 import logger from "../logger";
 

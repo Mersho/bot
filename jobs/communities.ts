@@ -1,7 +1,7 @@
 import { Telegraf } from "telegraf";
 import { MainContext } from "../bot/start";
 
-const { Order, Community } = require('../models');
+import { Order, Community } from '../models';
 import logger from "../logger";
 
 const deleteCommunity = async (bot: Telegraf<MainContext>) => {

@@ -31,4 +31,5 @@ const DisputeSchema = new Schema<IDispute>({
   created_at: { type: Date, default: Date.now },
 });
 
-module.exports = mongoose.model<IDispute>('Dispute', DisputeSchema);
+const Dispute = mongoose.model<IDispute>('Dispute', DisputeSchema);
+export default Dispute;

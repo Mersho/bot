@@ -1,13 +1,14 @@
 import { Telegraf } from "telegraf";
 import { MainContext } from "../bot/start";
 
-const { Config } = require('../models');
+import { Config } from '../models';
 const { getInfo } = require('../ln');
 import logger from "../logger";
 
 const info = async (bot: Telegraf<MainContext>) => {
   try {
     const config = await Config.findOne({});
+    if (!config) return;
     const info = await getInfo();
     if (info.is_synced_to_chain) {
       config.node_status = 'up';
