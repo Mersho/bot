@@ -1,5 +1,5 @@
-const { TelegramError } = require('telegraf');
-const QR = require('qrcode');
+import { TelegramError } from 'telegraf'
+import QR from 'qrcode';
 const {
   getCurrency,
   numberFormat,
@@ -12,7 +12,7 @@ const {
   decimalRound,
   getUserAge,
 } = require('../util');
-const logger = require('../logger');
+import logger from "../logger";
 import { MainContext } from './start';
 import { UserDocument } from '../models/user'
 import { IOrder } from '../models/order'
@@ -107,18 +107,18 @@ const invoicePaymentRequestMessage = async (
   }
 };
 
-const pendingSellMessage = async (ctx: MainContext, user: UserDocument, order: IOrder, channel: string, i18n: I18nContext) => {
+const pendingSellMessage = async (bot: Telegraf<MainContext>, user: UserDocument, order: IOrder, channel: string, i18n: I18nContext) => {
   try {
     const orderExpirationWindow =
       Number(process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW) / 60 / 60;
-    await ctx.telegram.sendMessage(
+    await bot.telegram.sendMessage(
       user.tg_id,
       i18n.t('pending_sell', {
         channel,
         orderExpirationWindow: Math.round(orderExpirationWindow),
       })
     );
-    await ctx.telegram.sendMessage(
+    await bot.telegram.sendMessage(
       user.tg_id,
       i18n.t('cancel_order_cmd', { orderId: order._id }),
       { parse_mode: 'MarkdownV2' }
@@ -616,7 +616,7 @@ const publishBuyOrderMessage = async (
 };
 
 const publishSellOrderMessage = async (
-  ctx: MainContext,
+  bot: Telegraf<MainContext>,
   user: UserDocument,
   order: IOrder,
   i18n: I18nContext,
@@ -627,7 +627,7 @@ const publishSellOrderMessage = async (
     publishMessage += `:${order._id}:`;
     const channel = await getOrderChannel(order);
     // We send the message to the channel
-    const message1 = await ctx.telegram.sendMessage(channel, publishMessage, {
+    const message1 = await bot.telegram.sendMessage(channel, publishMessage, {
       reply_markup: {
         inline_keyboard: [
           [{ text: i18n.t('buy_sats'), callback_data: 'takesell' }],
@@ -641,7 +641,7 @@ const publishSellOrderMessage = async (
     await order.save();
     // Message to user let know the order was published
     if (messageToUser)
-      await pendingSellMessage(ctx, user, order, channel, i18n);
+      await pendingSellMessage(bot, user, order, channel, i18n);
   } catch (error) {
     logger.error(error);
   }
@@ -1539,7 +1539,7 @@ const currencyNotSupportedMessage = async (ctx: MainContext, currencies: Array<s
   }
 };
 
-const notAuthorized = async (ctx: MainContext, tgId: string) => {
+const notAuthorized = async (ctx: MainContext, tgId: string | undefined) => {
   try {
     if (tgId) {
       await ctx.telegram.sendMessage(tgId, ctx.i18n.t('not_authorized'));
@@ -1596,7 +1596,7 @@ const showConfirmationButtons = async (ctx: MainContext, orders: Array<IOrder>, 
   }
 };
 
-module.exports = {
+export {
   startMessage,
   initBotErrorMessage,
   invoicePaymentRequestMessage,
