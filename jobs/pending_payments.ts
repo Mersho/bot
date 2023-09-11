@@ -1,13 +1,13 @@
 const { payRequest, isPendingPayment } = require('../ln');
-const { PendingPayment, Order, User, Community } = require('../models');
-const messages = require('../bot/messages');
+import { PendingPayment, Order, User, Community } from '../models';
+import * as messages from '../bot/messages';
 const { getUserI18nContext } = require('../util');
-const logger = require('../logger');
+import logger from "../logger";
 import { Telegraf } from 'telegraf';
 import { I18nContext } from '@grammyjs/i18n';
 import { MainContext } from '../bot/start';
 
-exports.attemptPendingPayments = async (bot: Telegraf<MainContext>): Promise<void> => {
+export const attemptPendingPayments = async (bot: Telegraf<MainContext>): Promise<void> => {
   const pendingPayments = await PendingPayment.find({
     paid: false,
     attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
@@ -16,6 +16,7 @@ exports.attemptPendingPayments = async (bot: Telegraf<MainContext>): Promise<voi
   });
   for (const pending of pendingPayments) {
     const order = await Order.findOne({ _id: pending.order_id });
+    if (order == null) throw "order object is null";
     try {
       pending.attempts++;
       if (order.status === 'SUCCESS') {
@@ -38,6 +39,7 @@ exports.attemptPendingPayments = async (bot: Telegraf<MainContext>): Promise<voi
         request: pending.payment_request,
       });
       const buyerUser = await User.findOne({ _id: order.buyer_id });
+      if (buyerUser === null) return;
       const i18nCtx: I18nContext = await getUserI18nContext(buyerUser);
       // If the buyer's invoice is expired we let it know and don't try to pay again
       if (!!payment && payment.is_expired) {
@@ -55,12 +57,13 @@ exports.attemptPendingPayments = async (bot: Telegraf<MainContext>): Promise<voi
         order.status = 'SUCCESS';
         order.routing_fee = payment.fee;
         pending.paid = true;
-        pending.paid_at = new Date().toISOString();
+        pending.paid_at = new Date();
         // We add a new completed trade for the buyer
         buyerUser.trades_completed++;
         await buyerUser.save();
         // We add a new completed trade for the seller
         const sellerUser = await User.findOne({ _id: order.seller_id });
+        if (!sellerUser) return;
         sellerUser.trades_completed++;
         sellerUser.save();
         logger.info(`Invoice with hash: ${pending.hash} paid`);
@@ -111,7 +114,7 @@ exports.attemptPendingPayments = async (bot: Telegraf<MainContext>): Promise<voi
   }
 };
 
-exports.attemptCommunitiesPendingPayments = async (bot: Telegraf<MainContext>): Promise<void> => {
+export const attemptCommunitiesPendingPayments = async (bot: Telegraf<MainContext>): Promise<void> => {
   const pendingPayments = await PendingPayment.find({
     paid: false,
     attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
@@ -134,6 +137,7 @@ exports.attemptCommunitiesPendingPayments = async (bot: Telegraf<MainContext>): 
         request: pending.payment_request,
       });
       const user = await User.findById(pending.user_id);
+      if (!user) return;
       const i18nCtx: I18nContext = await getUserI18nContext(user);
       // If the buyer's invoice is expired we let it know and don't try to pay again
       if (!!payment && payment.is_expired) {
@@ -145,9 +149,10 @@ exports.attemptCommunitiesPendingPayments = async (bot: Telegraf<MainContext>): 
       }
 
       const community = await Community.findById(pending.community_id);
+      if (!community) return;
       if (!!payment && !!payment.confirmed_at) {
         pending.paid = true;
-        pending.paid_at = new Date().toISOString();
+        pending.paid_at = new Date();
 
         // Reset the community's values
         community.earnings = 0;
