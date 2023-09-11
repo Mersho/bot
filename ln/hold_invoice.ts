@@ -30,7 +30,7 @@ const createHoldInvoice = async (description: string, amount: number ) => {
   }
 };
 
-const settleHoldInvoice = async ( secret: string ) => {
+const settleHoldInvoice = async ( { secret }: { secret: string } ) => {
   try {
     await lightning.settleHodlInvoice({ lnd, secret });
   } catch (error) {
@@ -38,7 +38,7 @@ const settleHoldInvoice = async ( secret: string ) => {
   }
 };
 
-const cancelHoldInvoice = async ( hash: string ) => {
+const cancelHoldInvoice = async ( { hash }: { hash: string } ) => {
   try {
     await lightning.cancelHodlInvoice({ lnd, id: hash });
   } catch (error) {
@@ -46,7 +46,7 @@ const cancelHoldInvoice = async ( hash: string ) => {
   }
 };
 
-const getInvoice = async ( hash: string ) => {
+const getInvoice = async ( { hash }: { hash: string } ) => {
   try {
     return await lightning.getInvoice({ lnd, id: hash });
   } catch (error) {
