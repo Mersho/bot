@@ -40,7 +40,15 @@
     "network"
   ],
   "devDependencies": {
+    "@types/chai": "^4.3.6",
+    "@types/eslint": "^8.44.2",
+    "@types/eslint-config-prettier": "^6.11.0",
+    "@types/mocha": "^10.0.1",
     "@types/node": "^20.5.0",
+    "@types/node-schedule": "^2.1.0",
+    "@types/nodemon": "1.19.2",
+    "@types/prettier": "^2.7.3",
+    "@types/qrcode": "^1.5.2",
     "chai": "^4.3.4",
     "chokidar": "^3.5.3",
     "eslint": "^8.15.0",
