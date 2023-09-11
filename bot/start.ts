@@ -3,17 +3,16 @@ import { I18n, I18nContext } from '@grammyjs/i18n';
 import { Message } from 'typegram'
 import { UserDocument } from '../models/user'
 import { FilterQuery } from 'mongoose';
-
-const { limit } = require('@grammyjs/ratelimiter');
-const schedule = require('node-schedule');
-const {
+import { limit } from "@grammyjs/ratelimiter"
+import schedule from 'node-schedule';
+import {
   Order,
   User,
   PendingPayment,
   Community,
   Dispute,
   Config,
-} = require('../models');
+} from '../models';
 const { getCurrenciesWithPrice, deleteOrderFromChannel } = require('../util');
 const {
   commandArgsMiddleware,
@@ -56,7 +55,7 @@ const {
   validateInvoice,
   validateLightningAddress,
 } = require('./validations');
-const messages = require('./messages');
+import * as messages from './messages';
 const {
   attemptPendingPayments,
   cancelOrders,
@@ -66,7 +65,8 @@ const {
   deleteCommunity,
   nodeInfo,
 } = require('../jobs');
-const logger = require('../logger');
+import logger from "../logger";
+import { ICommunity, IUsernameId } from '../models/community';
 
 export interface MainContext extends Context {
   match: Array<string> | null;
@@ -75,7 +75,7 @@ export interface MainContext extends Context {
   admin: UserDocument;
 }
 
-interface OrderQuery {
+export interface OrderQuery {
   status?: string;
   buyer_id?: string;
   seller_id?: string;
@@ -137,7 +137,7 @@ has the same condition.
 The problem mentioned above is similar to this issue:
 https://github.com/telegraf/telegraf/issues/1319#issuecomment-766360594
 */
-const ctxUpdateAssertMsg = "ctx.update.message.text is not available.";
+export const ctxUpdateAssertMsg = "ctx.update.message.text is not available.";
 
 const initialize = (botToken: string, options: Partial<Telegraf.Options<MainContext>>): Telegraf<MainContext> => {
   const i18n = new I18n({
@@ -256,11 +256,11 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
         throw new Error(ctxUpdateAssertMsg);
       }
       const params = ctx.update.message.text.split(' ');
-      const [command, orderId] = params.filter((el) => el);
+      const [command, orderId] = params.filter((el: string) => el);
 
       if (!orderId) {
         const orders = await askForConfirmation(ctx.user, command);
-        if (!orders.length) return await ctx.reply(`${command} <order Id>`);
+        if (!orders?.length) return await ctx.reply(`${command} <order Id>`);
 
         return await messages.showConfirmationButtons(ctx, orders, command);
       } else if (!(await validateObjectId(ctx, orderId))) {
@@ -294,14 +294,14 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
           logger.debug(
             `cancelorder ${order._id}: The order is not in a community`
           );
-          return await messages.notAuthorized(ctx);
+          return await messages.notAuthorized(ctx, undefined);
         }
 
         if (order.community_id != ctx.admin.default_community_id) {
           logger.debug(
             `cancelorder ${order._id}: The community and the default user community are not the same`
           );
-          return await messages.notAuthorized(ctx);
+          return await messages.notAuthorized(ctx, undefined);
         }
 
         // We check if this dispute is from a community we validate that
@@ -310,7 +310,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
           logger.debug(
             `cancelorder ${order._id}: @${ctx.admin.username} is not the solver of this dispute`
           );
-          return await messages.notAuthorized(ctx);
+          return await messages.notAuthorized(ctx, undefined);
         }
       }
 
@@ -327,6 +327,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
       order.canceled_by = ctx.admin._id;
       const buyer = await User.findOne({ _id: order.buyer_id });
       const seller = await User.findOne({ _id: order.seller_id });
+      if (!buyer || !seller) return;
       await order.save();
       // we sent a private message to the admin
       await messages.successCancelOrderMessage(ctx, ctx.admin, order, ctx.i18n);
@@ -347,11 +348,11 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
         throw new Error(ctxUpdateAssertMsg);
       }
       const params = ctx.update.message.text.split(' ');
-      const [command, orderId] = params.filter((el) => el);
+      const [command, orderId] = params.filter((el: string) => el);
 
       if (!orderId) {
         const orders = await askForConfirmation(ctx.user, command);
-        if (!orders.length) return await ctx.reply(`${command}  <order Id>`);
+        if (!orders?.length) return await ctx.reply(`${command}  <order Id>`);
 
         return await messages.showConfirmationButtons(ctx, orders, command);
       } else if (!(await validateObjectId(ctx, orderId))) {
@@ -402,17 +403,17 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
       // We check if this is a solver, the order must be from the same community
       if (!ctx.admin.admin) {
         if (!order.community_id) {
-          return await messages.notAuthorized(ctx);
+          return await messages.notAuthorized(ctx, undefined);
         }
 
         if (order.community_id != ctx.admin.default_community_id) {
-          return await messages.notAuthorized(ctx);
+          return await messages.notAuthorized(ctx, undefined);
         }
 
         // We check if this dispute is from a community we validate that
         // the solver is running this command
         if (dispute && dispute.solver_id != ctx.admin.id) {
-          return await messages.notAuthorized(ctx);
+          return await messages.notAuthorized(ctx, undefined);
         }
       }
 
@@ -426,6 +427,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
       order.status = 'COMPLETED_BY_ADMIN';
       const buyer = await User.findOne({ _id: order.buyer_id });
       const seller = await User.findOne({ _id: order.seller_id });
+      if (!buyer || !seller) return;
       await order.save();
       // we sent a private message to the admin
       await messages.successCompleteOrderMessage(ctx, order);
@@ -454,6 +456,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
 
       const buyer = await User.findOne({ _id: order.buyer_id });
       const seller = await User.findOne({ _id: order.seller_id });
+      if (!buyer || !seller) return;
 
       await messages.checkOrderMessage(ctx, order, buyer, seller);
     } catch (error) {
@@ -515,11 +518,11 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
         throw new Error(ctxUpdateAssertMsg);
       }
       const params = ctx.update.message.text.split(' ');
-      const [command, orderId] = params.filter((el) => el);
+      const [command, orderId] = params.filter((el: string) => el);
 
       if (!orderId) {
         const orders = await askForConfirmation(ctx.user, command);
-        if (!orders.length) return await ctx.reply(`${command} <order Id>`);
+        if (!orders?.length) return await ctx.reply(`${command} <order Id>`);
 
         return await messages.showConfirmationButtons(ctx, orders, command);
       } else if (!(await validateObjectId(ctx, orderId))) {
@@ -557,11 +560,11 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
           const community = await Community.findById(
             ctx.admin.default_community_id
           );
-          community.banned_users.push({
+          community?.banned_users.push({
             id: user._id,
             username: user.username,
           });
-          await community.save();
+          await community?.save();
         } else {
           return await ctx.reply(ctx.i18n.t('need_default_community'));
         }
@@ -600,8 +603,9 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
           const community = await Community.findById(
             ctx.admin.default_community_id
           );
-          community.banned_users = community.banned_users.filter(
-            (el: any) => el.id !== user.id
+          if (!community) return;
+          community.banned_users = community.banned_users.toObject().filter(
+            (el: IUsernameId) => el.id !== user.id
           );
           await community.save();
         } else {
@@ -813,6 +817,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
   bot.command('info', userMiddleware, async (ctx: MainContext) => {
     try {
       const config = await Config.findOne({});
+      if (!config) return;
       await messages.showInfoMessage(ctx, ctx.user, config);
     } catch (error) {
       logger.error(error);
