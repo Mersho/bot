@@ -1,7 +1,7 @@
-const { payRequest, isPendingPayment } = require('../ln');
+import { payRequest, isPendingPayment } from '../ln';
 import { PendingPayment, Order, User, Community } from '../models';
 import * as messages from '../bot/messages';
-const { getUserI18nContext } = require('../util');
+import { getUserI18nContext } from '../util';
 import logger from "../logger";
 import { Telegraf } from 'telegraf';
 import { I18nContext } from '@grammyjs/i18n';

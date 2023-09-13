@@ -56,7 +56,7 @@ const {
   validateLightningAddress,
 } = require('./validations');
 import * as messages from './messages';
-const {
+import {
   attemptPendingPayments,
   cancelOrders,
   deleteOrders,
@@ -64,9 +64,9 @@ const {
   attemptCommunitiesPendingPayments,
   deleteCommunity,
   nodeInfo,
-} = require('../jobs');
+} from '../jobs';
 import logger from "../logger";
-import { ICommunity, IUsernameId } from '../models/community';
+import { IUsernameId } from '../models/community';
 
 export interface MainContext extends Context {
   match: Array<string> | null;

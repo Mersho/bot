@@ -2,16 +2,19 @@ import { I18nContext } from "@grammyjs/i18n";
 import { ICommunity, IOrderChannel } from "../models/community";
 import { IOrder } from "../models/order";
 import { UserDocument } from "../models/user";
-import { IFiat } from "./fiatModel";
+import { IFiat, IFiatProperties } from "./fiatModel";
 import { ILanguage, ILanguages } from "./languagesModel";
 import { Telegram } from "telegraf/typings/core/types/typegram";
 
-const axios = require('axios');
+import axios from "axios";
 const { I18n } = require('@grammyjs/i18n');
-const currencies = require('./fiat.json');
-const languages = require('./languages.json');
-const { Order, Community } = require('../models');
-const logger = require('../logger');
+import fiatJson from './fiat.json'
+import languagesJson from './languages.json';
+import { Order, Community } from "../models";
+import logger from "../logger";
+
+const languages: ILanguages = languagesJson;
+const currencies: IFiat = fiatJson;
 
 // ISO 4217, all ISO currency codes are 3 letters but users can trade shitcoins
 const isIso4217 = (code: string): boolean => {
@@ -28,7 +31,7 @@ const isIso4217 = (code: string): boolean => {
   });
 };
 
-const getCurrency = (code: string): (IFiat | null) => {
+const getCurrency = (code: string): (IFiatProperties | null) => {
   if (!isIso4217(code)) return null;
   const currency = currencies[code];
   if (currency === undefined) return null;
@@ -308,6 +311,7 @@ const getDisputeChannel = async (order: IOrder) => {
   let channel = process.env.DISPUTE_CHANNEL;
   if (order.community_id) {
     const community = await Community.findOne({ _id: order.community_id });
+    if (community === null) return;
     channel = community.dispute_channel;
   }
 
@@ -392,6 +396,7 @@ const getFee = async (amount: number, communityId: string) => {
   const botFee = maxFee * Number(process.env.FEE_PERCENT);
   let communityFee = Math.round(maxFee - botFee);
   const community = await Community.findOne({ _id: communityId });
+  if (community === null) return;
   communityFee = communityFee * (community.fee / 100);
 
   return botFee + communityFee;

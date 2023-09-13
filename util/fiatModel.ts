@@ -1,4 +1,4 @@
-export interface IFiat {
+export interface IFiatProperties {
     symbol: string;
     name: string;
     symbol_native: string;
@@ -10,3 +10,7 @@ export interface IFiat {
     price?: boolean;
     locale?: string;
 }
+
+export interface IFiat {
+    [key: string]: IFiatProperties;
+  }

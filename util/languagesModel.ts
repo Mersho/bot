@@ -9,6 +9,10 @@ export interface ILanguages {
     uk: ILanguage;
 }
 
+export interface ILanguages {
+    [key: string]: ILanguage;
+  }
+
 export interface ILanguage {
     name:  string;
     emoji: string;

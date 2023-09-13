@@ -1,11 +1,10 @@
-import * as dotenv from "dotenv";
-dotenv.config()
+import 'dotenv/config';
 import { SocksProxyAgent } from "socks-proxy-agent";
 import { start } from "./bot/start";
 import mongoConnect from './db_connect'
-const { resubscribeInvoices } = require('./ln');
+import { resubscribeInvoices } from "./ln";
 import logger from "./logger";
-const { delay } = require('./util');
+import { delay } from "./util";
 
 (async () => {
   process.on('unhandledRejection', e => {

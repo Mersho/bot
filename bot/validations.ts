@@ -6,12 +6,14 @@ import { IOrder } from "../models/order";
 import { Telegraf } from "telegraf";
 
 const { parsePaymentRequest } = require('invoices');
-const { ObjectId } = require('mongoose').Types;
+import { Types } from 'mongoose';
 import * as messages from './messages';
 import { Order, User, Community } from '../models';
-const { isIso4217, isDisputeSolver } = require('../util');
-const { existLightningAddress } = require('../lnurl/lnurl-pay');
-const logger = require('../logger');
+import { isIso4217, isDisputeSolver } from "../util";
+import { existLightningAddress } from '../lnurl/lnurl-pay'
+import logger from "../logger";
+
+const { ObjectId } = Types;
 
 // We look in database if the telegram user exists,
 // if not, it creates a new user
@@ -94,6 +96,7 @@ const validateAdmin = async (ctx: MainContext, id?: string) => {
     if (user.default_community_id)
       community = await Community.findOne({ _id: user.default_community_id });
 
+    if (community === null) return;
     const isSolver = isDisputeSolver(community, user);
 
     if (!user.admin && !isSolver)
@@ -645,7 +648,7 @@ const isBannedFromCommunity = async (user: UserDocument, communityId: string) =>
   }
 };
 
-module.exports = {
+export {
   validateSellOrder,
   validateBuyOrder,
   validateUser,
