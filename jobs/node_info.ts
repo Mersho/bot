@@ -8,7 +8,7 @@ import logger from "../logger";
 const info = async (bot: Telegraf<MainContext>) => {
   try {
     const config = await Config.findOne({});
-    if (!config) return;
+    if (config === null) return;
     const info = await getInfo();
     if (info.is_synced_to_chain) {
       config.node_status = 'up';

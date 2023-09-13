@@ -27,7 +27,7 @@ const calculateEarnings = async () => {
     }
     for (const [communityId, earnings] of earningsMap) {
       const community = await Community.findById(communityId);
-      if (!community) return;
+      if (community === null) return;
       const amount = Math.round(earnings[0]);
       community.earnings = community.earnings + amount;
       community.orders_to_redeem = community.orders_to_redeem + earnings[1];

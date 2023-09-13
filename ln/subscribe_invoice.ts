@@ -15,13 +15,13 @@ const subscribeInvoice = async (bot: Telegraf<MainContext>, id: string, resub: b
     sub.on('invoice_updated', async invoice => {
       if (invoice.is_held && !resub) {
         const order = await Order.findOne({ hash: invoice.id });
-        if (!order) return;
+        if (order === null) return;
         logger.info(
           `Order ${order._id} Invoice with hash: ${id} is being held!`
         );
         const buyerUser = await User.findOne({ _id: order.buyer_id });
         const sellerUser = await User.findOne({ _id: order.seller_id });
-        if (!buyerUser || !sellerUser) return;
+        if (buyerUser === null || sellerUser === null) return;
         order.status = 'ACTIVE';
         // This is the i18n context we need to pass to the message
         const i18nCtxBuyer = await getUserI18nContext(buyerUser);
@@ -56,7 +56,7 @@ const subscribeInvoice = async (bot: Telegraf<MainContext>, id: string, resub: b
       }
       if (invoice.is_confirmed) {
         const order = await Order.findOne({ hash: id });
-        if (!order) return;
+        if (order === null) return;
         logger.info(
           `Order ${order._id} - Invoice with hash: ${id} was settled!`
         );
@@ -64,7 +64,7 @@ const subscribeInvoice = async (bot: Telegraf<MainContext>, id: string, resub: b
         await order.save();
         const buyerUser = await User.findOne({ _id: order.buyer_id });
         const sellerUser = await User.findOne({ _id: order.seller_id });
-        if (!buyerUser || !sellerUser) return;
+        if (buyerUser === null || sellerUser === null) return;
         // We need two i18n contexts to send messages to each user
         const i18nCtxBuyer = await getUserI18nContext(buyerUser);
         const i18nCtxSeller = await getUserI18nContext(sellerUser);

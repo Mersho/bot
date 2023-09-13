@@ -63,7 +63,7 @@ export const attemptPendingPayments = async (bot: Telegraf<MainContext>): Promis
         await buyerUser.save();
         // We add a new completed trade for the seller
         const sellerUser = await User.findOne({ _id: order.seller_id });
-        if (!sellerUser) return;
+        if (sellerUser === null) return;
         sellerUser.trades_completed++;
         sellerUser.save();
         logger.info(`Invoice with hash: ${pending.hash} paid`);
@@ -137,7 +137,7 @@ export const attemptCommunitiesPendingPayments = async (bot: Telegraf<MainContex
         request: pending.payment_request,
       });
       const user = await User.findById(pending.user_id);
-      if (!user) return;
+      if (user === null) return;
       const i18nCtx: I18nContext = await getUserI18nContext(user);
       // If the buyer's invoice is expired we let it know and don't try to pay again
       if (!!payment && payment.is_expired) {
@@ -149,7 +149,7 @@ export const attemptCommunitiesPendingPayments = async (bot: Telegraf<MainContex
       }
 
       const community = await Community.findById(pending.community_id);
-      if (!community) return;
+      if (community === null) return;
       if (!!payment && !!payment.confirmed_at) {
         pending.paid = true;
         pending.paid_at = new Date();
