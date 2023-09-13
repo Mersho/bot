@@ -207,7 +207,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
   bot.command('maintenance', superAdminMiddleware, async (ctx: MainContext): Promise<void> => {
     try {
       const [val] = await validateParams(ctx, 2, '\\<_on/off_\\>');
-      if (!val) return;
+      if (val === null) return;
       let config = await Config.findOne();
       if (!config) {
         config = new Config();
@@ -279,7 +279,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
     try {
       const [orderId] = await validateParams(ctx, 2, '\\<_order id_\\>');
 
-      if (!orderId) return;
+      if (orderId === null) return;
       if (!(await validateObjectId(ctx, orderId))) return;
       const order = await Order.findOne({ _id: orderId });
 
@@ -392,7 +392,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
     try {
       const [orderId] = await validateParams(ctx, 2, '\\<_order id_\\>');
 
-      if (!orderId) return;
+      if (orderId === null) return;
       if (!(await validateObjectId(ctx, orderId))) return;
 
       const order = await Order.findOne({ _id: orderId });
@@ -794,7 +794,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
   bot.command('paytobuyer', superAdminMiddleware, async (ctx: MainContext) => {
     try {
       const [orderId] = await validateParams(ctx, 2, '\\<_order id_\\>');
-      if (!orderId) return;
+      if (orderId === null) return;
       if (!(await validateObjectId(ctx, orderId))) return;
       const order = await Order.findOne({
         _id: orderId,
@@ -838,7 +838,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
   bot.command('showusername', userMiddleware, async (ctx: MainContext) => {
     try {
       let [show] = await validateParams(ctx, 2, '_yes/no_');
-      if (!show) return;
+      if (show === null) return;
       show = show === 'yes';
       ctx.user.show_username = show;
       await ctx.user.save();
@@ -851,7 +851,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
   bot.command('showvolume', userMiddleware, async (ctx: MainContext) => {
     try {
       let [show] = await validateParams(ctx, 2, '_yes/no_');
-      if (!show) return;
+      if (show === null) return;
       show = show === 'yes';
       ctx.user.show_volume_traded = show;
       await ctx.user.save();

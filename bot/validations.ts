@@ -566,7 +566,7 @@ const validateSeller = async (ctx: MainContext, user: UserDocument) => {
   }
 };
 
-const validateParams = async (ctx: MainContext, paramNumber: number, errOutputString: string) => {
+const validateParams = async (ctx: MainContext, paramNumber: number, errOutputString: string): Promise<null | Array<string>> => {
   try {
     if (!('message' in ctx.update) || !('text' in ctx.update.message)) {
       throw new Error(ctxUpdateAssertMsg);
@@ -585,7 +585,7 @@ const validateParams = async (ctx: MainContext, paramNumber: number, errOutputSt
     return params.slice(1);
   } catch (error) {
     logger.error(error);
-    return false;
+    return null;
   }
 };
 

@@ -28,10 +28,10 @@ const isIso4217 = (code: string): boolean => {
   });
 };
 
-const getCurrency = (code: string): (IFiat | boolean) => {
-  if (!isIso4217(code)) return false;
+const getCurrency = (code: string): (IFiat | null) => {
+  if (!isIso4217(code)) return null;
   const currency = currencies[code];
-  if (currency === undefined) return false;
+  if (currency === undefined) return null;
 
   return currency;
 };
@@ -201,10 +201,12 @@ const decimalRound = (value: number, exp: number): number => {
   return +(valueArr[0] + 'e' + (valueArr[1] ? +valueArr[1] + exp : exp));
 };
 
-const extractId = (text: string): string | undefined => {
+const extractId = (text: string): (string | null) => {
   const matches = text.match(/:([a-f0-9]{24}):$/);
-
-  return matches?.[1];
+  if (matches){
+    return matches?.[1];
+  }
+  return null;
 };
 
 // Clean strings that are going to be rendered with markdown
