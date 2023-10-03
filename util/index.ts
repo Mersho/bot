@@ -5,13 +5,12 @@ import { UserDocument } from "../models/user";
 import { IFiat, IFiatProperties } from "./fiatModel";
 import { ILanguage, ILanguages } from "./languagesModel";
 import { Telegram } from "telegraf/typings/core/types/typegram";
-
 import axios from "axios";
-const { I18n } = require('@grammyjs/i18n');
 import fiatJson from './fiat.json'
 import languagesJson from './languages.json';
 import { Order, Community } from "../models";
 import logger from "../logger";
+const { I18n } = require('@grammyjs/i18n');
 
 const languages: ILanguages = languagesJson;
 const currencies: IFiat = fiatJson;

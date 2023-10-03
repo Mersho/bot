@@ -16,7 +16,7 @@ export const attemptPendingPayments = async (bot: Telegraf<MainContext>): Promis
   });
   for (const pending of pendingPayments) {
     const order = await Order.findOne({ _id: pending.order_id });
-    if (order == null) throw "order object is null";
+    if (order === null) throw Error("order object is null");
     try {
       pending.attempts++;
       if (order.status === 'SUCCESS') {
