@@ -36,4 +36,4 @@ const resubscribeInvoices = async (bot: Telegraf<MainContext>) => {
   }
 };
 
-export default resubscribeInvoices;
+export { resubscribeInvoices };

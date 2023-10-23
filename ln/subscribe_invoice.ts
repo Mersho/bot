@@ -133,4 +133,4 @@ const subscribeInvoice = async (
   }
 };
 
-export default subscribeInvoice;
+export { subscribeInvoice };

@@ -20,4 +20,4 @@ const connect = () => {
   return mongoose;
 };
 
-export default connect;
+export { connect };

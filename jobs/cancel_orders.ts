@@ -99,4 +99,4 @@ const cancelOrders = async (bot: Telegraf<MainContext>) => {
   }
 };
 
-export default cancelOrders;
+export { cancelOrders };

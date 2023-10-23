@@ -34,4 +34,4 @@ const deleteCommunity = async (bot: Telegraf<MainContext>) => {
   }
 };
 
-export default deleteCommunity;
+export { deleteCommunity };

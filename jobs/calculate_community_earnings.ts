@@ -42,4 +42,4 @@ const calculateEarnings = async () => {
   }
 };
 
-export default calculateEarnings;
+export { calculateEarnings };
