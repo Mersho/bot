@@ -39,7 +39,9 @@ const startMessage = async (ctx: MainContext) => {
     });
     await ctx.reply(message);
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -55,7 +57,9 @@ const initBotErrorMessage = async (
       if (
         !(error instanceof TelegramError && error.response.error_code === 403)
       ) {
-        logger.error(error);
+        if (error instanceof Error) {
+          logger.error(`Error occurred: ${error.message}`, error, error.stack);
+        }
       }
     });
 };
@@ -64,7 +68,9 @@ const nonHandleErrorMessage = async (ctx: MainContext) => {
   try {
     await ctx.reply(ctx.i18n.t('non_handle_error'));
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -111,7 +117,9 @@ const invoicePaymentRequestMessage = async (
       },
     ]);
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -138,7 +146,9 @@ const pendingSellMessage = async (
       { parse_mode: 'MarkdownV2' }
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -165,7 +175,9 @@ const pendingBuyMessage = async (
       { parse_mode: 'MarkdownV2' }
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -175,7 +187,9 @@ const sellOrderCorrectFormatMessage = async (ctx: MainContext) => {
       parse_mode: 'MarkdownV2',
     });
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -185,7 +199,9 @@ const buyOrderCorrectFormatMessage = async (ctx: MainContext) => {
       parse_mode: 'MarkdownV2',
     });
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -197,7 +213,9 @@ const minimunAmountInvoiceMessage = async (ctx: MainContext) => {
       })
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -207,7 +225,9 @@ const minimunExpirationTimeInvoiceMessage = async (ctx: MainContext) => {
       Number(process.env.INVOICE_EXPIRATION_WINDOW) / 60 / 1000;
     await ctx.reply(ctx.i18n.t('min_expiration_time', { expirationTime }));
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -215,7 +235,9 @@ const expiredInvoiceMessage = async (ctx: MainContext) => {
   try {
     await ctx.reply(ctx.i18n.t('invoice_expired'));
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -233,7 +255,9 @@ const expiredInvoiceOnPendingMessage = async (
       { parse_mode: 'MarkdownV2' }
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -241,7 +265,9 @@ const requiredAddressInvoiceMessage = async (ctx: MainContext) => {
   try {
     await ctx.reply(ctx.i18n.t('invoice_require_destination'));
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -253,7 +279,9 @@ const invoiceMustBeLargerMessage = async (ctx: MainContext) => {
       })
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -261,7 +289,9 @@ const invoiceExpiryTooShortMessage = async (ctx: MainContext) => {
   try {
     await ctx.reply(ctx.i18n.t('invoice_expiry_too_short_error'));
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -269,7 +299,9 @@ const invoiceHasExpiredMessage = async (ctx: MainContext) => {
   try {
     await ctx.reply(ctx.i18n.t('invoice_has_expired_error'));
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -277,7 +309,9 @@ const invoiceHasWrongDestinationMessage = async (ctx: MainContext) => {
   try {
     await ctx.reply(ctx.i18n.t('invoice_has_wrong_destination_error'));
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -285,7 +319,9 @@ const requiredHashInvoiceMessage = async (ctx: MainContext) => {
   try {
     await ctx.reply(ctx.i18n.t('invoice_require_hash'));
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -293,7 +329,9 @@ const invoiceInvalidMessage = async (ctx: MainContext) => {
   try {
     await ctx.reply(ctx.i18n.t('invoice_invalid_error'));
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -305,7 +343,9 @@ const invalidOrderMessage = async (
   try {
     await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('order_id_invalid'));
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -321,7 +361,9 @@ const invalidTypeOrderMessage = async (
       ctx.i18n.t('order_invalid_type', { type })
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -336,7 +378,9 @@ const alreadyTakenOrderMessage = async (
       ctx.i18n.t('order_already_taken')
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -348,7 +392,9 @@ const invalidDataMessage = async (
   try {
     await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('invalid_data'));
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -360,7 +406,9 @@ const genericErrorMessage = async (
   try {
     await bot.telegram.sendMessage(user.tg_id, i18n.t('generic_error'));
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -394,7 +442,9 @@ const beginTakeBuyMessage = async (
       },
     });
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -430,7 +480,9 @@ const showHoldInvoiceMessage = async (
       },
     ]);
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -474,7 +526,9 @@ const onGoingTakeBuyMessage = async (
       },
     });
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -512,7 +566,9 @@ const beginTakeSellMessage = async (
       },
     });
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -551,7 +607,9 @@ const onGoingTakeSellMessage = async (
       })
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -567,7 +625,9 @@ const takeSellWaitingSellerToPayMessage = async (
       ctx.i18n.t('waiting_seller_to_pay', { orderId: order._id })
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -588,7 +648,9 @@ const releasedSatsMessage = async (
       i18nBuyer.t('funds_released', { sellerUsername: sellerUser.username })
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -614,7 +676,9 @@ const rateUserMessage = async (
       },
     });
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -622,7 +686,9 @@ const notActiveOrderMessage = async (ctx: MainContext) => {
   try {
     await ctx.reply(ctx.i18n.t('cant_process_order'));
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -630,7 +696,9 @@ const waitingForBuyerOrderMessage = async (ctx: MainContext) => {
   try {
     await ctx.reply(ctx.i18n.t('cant_release_order'));
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -638,7 +706,9 @@ const notOrderMessage = async (ctx: MainContext) => {
   try {
     await ctx.reply(ctx.i18n.t('no_id_related'));
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -674,7 +744,9 @@ const publishBuyOrderMessage = async (
       await pendingBuyMessage(bot, user, order, channel, i18n);
     }
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -708,7 +780,9 @@ const publishSellOrderMessage = async (
     if (messageToUser)
       await pendingSellMessage(ctx, user, order, channel, i18n);
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -716,7 +790,9 @@ const customMessage = async (ctx: MainContext, message: string) => {
   try {
     await ctx.reply(message, { parse_mode: 'MarkdownV2' });
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -731,7 +807,9 @@ const checkOrderMessage = async (
     message += `\n\n`;
     await ctx.reply(message, { parse_mode: 'MarkdownV2' });
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -754,7 +832,9 @@ const checkInvoiceMessage = async (
 
     return await ctx.reply(ctx.i18n.t('invoice_no_info'));
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -762,7 +842,9 @@ const mustBeValidCurrency = async (ctx: MainContext) => {
   try {
     await ctx.reply(ctx.i18n.t('must_be_valid_currency'));
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -770,7 +852,9 @@ const mustBeANumberOrRange = async (ctx: MainContext) => {
   try {
     await ctx.reply(ctx.i18n.t('must_be_number_or_range'));
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -778,7 +862,9 @@ const invalidLightningAddress = async (ctx: MainContext) => {
   try {
     await ctx.reply(ctx.i18n.t('invalid_lightning_address'));
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -794,7 +880,9 @@ const unavailableLightningAddress = async (
       ctx.i18n.t('unavailable_lightning_address', { la })
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -802,7 +890,9 @@ const helpMessage = async (ctx: MainContext) => {
   try {
     await ctx.reply(ctx.i18n.t('help'), { parse_mode: 'Markdown' });
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -810,7 +900,9 @@ const disclaimerMessage = async (ctx: MainContext) => {
   try {
     await ctx.reply(ctx.i18n.t('disclaimer'), { parse_mode: 'Markdown' });
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -827,7 +919,9 @@ const mustBeGreatherEqThan = async (
       })
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -838,7 +932,9 @@ const bannedUserErrorMessage = async (ctx: MainContext, user: UserDocument) => {
       ctx.i18n.t('you_have_been_banned')
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -868,7 +964,9 @@ const fiatSentMessages = async (
       { parse_mode: 'Markdown' }
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -882,7 +980,9 @@ const orderOnfiatSentStatusMessages = async (
       ctx.i18n.t('you_have_orders_waiting')
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -890,7 +990,9 @@ const userBannedMessage = async (ctx: MainContext) => {
   try {
     await ctx.reply(ctx.i18n.t('user_banned'));
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -898,7 +1000,9 @@ const userUnBannedMessage = async (ctx: MainContext) => {
   try {
     await ctx.reply(ctx.i18n.t('user_unbanned'));
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -906,7 +1010,9 @@ const notFoundUserMessage = async (ctx: MainContext) => {
   try {
     await ctx.reply(ctx.i18n.t('user_not_found'));
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -914,7 +1020,9 @@ const errorParsingInvoiceMessage = async (ctx: MainContext) => {
   try {
     await ctx.reply(ctx.i18n.t('parse_invoice_error'));
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -922,7 +1030,9 @@ const notValidIdMessage = async (ctx: MainContext) => {
   try {
     await ctx.reply(ctx.i18n.t('invalid_id'));
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -950,7 +1060,9 @@ const addInvoiceMessage = async (
       { parse_mode: 'MarkdownV2' }
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -973,7 +1085,9 @@ const sendBuyerInfo2SellerMessage = async (
       })
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -988,7 +1102,9 @@ const cantTakeOwnOrderMessage = async (
       ctx.i18n.t('cant_take_own_order')
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1000,7 +1116,9 @@ const notLightningInvoiceMessage = async (ctx: MainContext, order: IOrder) => {
       { parse_mode: 'MarkdownV2' }
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1008,7 +1126,9 @@ const notOrdersMessage = async (ctx: MainContext) => {
   try {
     await ctx.reply(ctx.i18n.t('you_have_no_orders'));
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1025,7 +1145,9 @@ const notRateForCurrency = async (
       })
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1033,7 +1155,9 @@ const incorrectAmountInvoiceMessage = async (ctx: MainContext) => {
   try {
     await ctx.reply(ctx.i18n.t('invoice_with_incorrect_amount'));
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1041,7 +1165,9 @@ const invoiceUpdatedMessage = async (ctx: MainContext) => {
   try {
     await ctx.reply(ctx.i18n.t('invoice_updated'));
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1049,7 +1175,9 @@ const invoiceUpdatedPaymentWillBeSendMessage = async (ctx: MainContext) => {
   try {
     await ctx.reply(ctx.i18n.t('invoice_updated_and_will_be_paid'));
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1057,14 +1185,18 @@ const invoiceAlreadyUpdatedMessage = async (ctx: MainContext) => {
   try {
     await ctx.reply(ctx.i18n.t('invoice_already_being_paid'));
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 const successSetAddress = async (ctx: MainContext) => {
   try {
     await ctx.reply(ctx.i18n.t('lightning_address_saved'));
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1072,7 +1204,9 @@ const badStatusOnCancelOrderMessage = async (ctx: MainContext) => {
   try {
     await ctx.reply(ctx.i18n.t('cancel_error'));
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1088,7 +1222,9 @@ const successCancelOrderMessage = async (
       i18n.t('cancel_success', { orderId: order._id })
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1104,7 +1240,9 @@ const counterPartyCancelOrderMessage = async (
       i18n.t('order_cancelled_by_counterparty', { orderId: order._id })
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1112,7 +1250,9 @@ const successCancelAllOrdersMessage = async (ctx: MainContext) => {
   try {
     await ctx.reply(ctx.i18n.t('cancelall_success'));
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1128,7 +1268,9 @@ const successCancelOrderByAdminMessage = async (
       ctx.i18n.t('order_cancelled_by_admin', { orderId: order._id })
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1136,7 +1278,9 @@ const successCompleteOrderMessage = async (ctx: MainContext, order: IOrder) => {
   try {
     await ctx.reply(ctx.i18n.t('order_completed', { orderId: order._id }));
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1152,7 +1296,9 @@ const successCompleteOrderByAdminMessage = async (
       ctx.i18n.t('order_completed_by_admin', { orderId: order._id })
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1166,7 +1312,9 @@ const shouldWaitCooperativeCancelMessage = async (
       ctx.i18n.t('have_to_wait_for_counterpart')
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1182,7 +1330,9 @@ const okCooperativeCancelMessage = async (
       i18n.t('ok_cooperativecancel', { orderId: order._id })
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1197,7 +1347,9 @@ const refundCooperativeCancelMessage = async (
       i18n.t('refund_cooperativecancel')
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1210,7 +1362,9 @@ const initCooperativeCancelMessage = async (
       ctx.i18n.t('init_cooperativecancel', { orderId: order._id })
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1231,7 +1385,9 @@ const counterPartyWantsCooperativeCancelMessage = async (
       { parse_mode: 'MarkdownV2' }
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1249,7 +1405,9 @@ const invoicePaymentFailedMessage = async (
       })
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1264,7 +1422,9 @@ const userCantTakeMoreThanOneWaitingOrderMessage = async (
       ctx.i18n.t('cant_take_more_orders')
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1272,7 +1432,9 @@ const sellerPaidHoldMessage = async (ctx: MainContext, user: UserDocument) => {
   try {
     await ctx.telegram.sendMessage(user.tg_id, ctx.i18n.t('seller_released'));
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1300,7 +1462,9 @@ const showInfoMessage = async (
     //   await bot.telegram.sendMessage(user.tg_id, `*Node pubkey*: ${info.public_key}\n`, { parse_mode: "MarkdownV2" });
     // }
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1318,7 +1482,9 @@ const buyerReceivedSatsMessage = async (
       })
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1333,7 +1499,9 @@ const listCurrenciesResponse = async (
     });
     await ctx.reply(response);
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1348,7 +1516,9 @@ const priceApiFailedMessage = async (
       ctx.i18n.t('problem_getting_price')
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1365,7 +1535,9 @@ const updateUserSettingsMessage = async (
       })
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1373,7 +1545,9 @@ const disableLightningAddress = async (ctx: MainContext) => {
   try {
     await ctx.reply(ctx.i18n.t('lightning_address_disabled'));
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1381,7 +1555,9 @@ const invalidRangeWithAmount = async (ctx: MainContext) => {
   try {
     await ctx.reply(ctx.i18n.t('invalid_range_with_amount'));
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1393,7 +1569,9 @@ const tooManyPendingOrdersMessage = async (
   try {
     ctx.telegram.sendMessage(user.tg_id, i18n.t('too_many_pending_orders'));
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1413,7 +1591,9 @@ const wizardAddInvoiceInitMessage = async (
       })
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1427,7 +1607,9 @@ const wizardAddInvoiceExitMessage = async (ctx: MainContext, order: IOrder) => {
       { parse_mode: 'MarkdownV2' }
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1435,7 +1617,9 @@ const wizardExitMessage = async (ctx: MainContext) => {
   try {
     await ctx.reply(ctx.i18n.t('wizard_exit'));
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1443,7 +1627,9 @@ const orderExpiredMessage = async (ctx: MainContext) => {
   try {
     await ctx.reply(ctx.i18n.t('order_expired'));
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1451,7 +1637,9 @@ const cantAddInvoiceMessage = async (ctx: MainContext) => {
   try {
     await ctx.reply(ctx.i18n.t('cant_add_invoice'));
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1463,7 +1651,9 @@ const sendMeAnInvoiceMessage = async (
   try {
     await ctx.reply(i18nCtx.t('send_me_lninvoice', { amount }));
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1484,7 +1674,9 @@ const wizardAddFiatAmountMessage = async (
       })
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1501,7 +1693,9 @@ const wizardAddFiatAmountWrongAmountMessage = async (
       })
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1518,7 +1712,9 @@ const wizardAddFiatAmountCorrectMessage = async (
       })
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1541,7 +1737,9 @@ const expiredOrderMessage = async (
       { parse_mode: 'MarkdownV2' }
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1556,7 +1754,9 @@ const toBuyerExpiredOrderMessage = async (
       i18n.t('expired_order_to_buyer', { helpGroup: process.env.HELP_GROUP })
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1571,7 +1771,9 @@ const toSellerExpiredOrderMessage = async (
       i18n.t('expired_order_to_seller', { helpGroup: process.env.HELP_GROUP })
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1587,7 +1789,9 @@ const toBuyerDidntAddInvoiceMessage = async (
       i18n.t('didnt_add_invoice', { orderId: order._id })
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1603,7 +1807,9 @@ const toSellerBuyerDidntAddInvoiceMessage = async (
       i18n.t('buyer_havent_add_invoice', { orderId: order._id })
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1622,7 +1828,9 @@ const toAdminChannelBuyerDidntAddInvoiceMessage = async (
       })
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1638,7 +1846,9 @@ const toSellerDidntPayInvoiceMessage = async (
       i18n.t('havent_paid_invoice', { orderId: order._id })
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1654,7 +1864,9 @@ const toBuyerSellerDidntPayInvoiceMessage = async (
       i18n.t('seller_havent_paid_invoice', { orderId: order._id })
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1673,7 +1885,9 @@ const toAdminChannelSellerDidntPayInvoiceMessage = async (
       })
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1697,7 +1911,9 @@ const toAdminChannelPendingPaymentSuccessMessage = async (
       })
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1718,7 +1934,9 @@ const toBuyerPendingPaymentSuccessMessage = async (
       })
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1749,7 +1967,9 @@ const toBuyerPendingPaymentFailedMessage = async (
       },
     });
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1770,7 +1990,9 @@ const toAdminChannelPendingPaymentFailedMessage = async (
       })
     );
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1782,7 +2004,9 @@ const currencyNotSupportedMessage = async (
     const currenciesStr = currencies.join(', ');
     await ctx.reply(ctx.i18n.t('currency_not_supported', { currenciesStr }));
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1794,7 +2018,9 @@ const notAuthorized = async (ctx: MainContext, tgId?: string) => {
       await ctx.reply(ctx.i18n.t('not_authorized'));
     }
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1802,7 +2028,9 @@ const mustBeANumber = async (ctx: MainContext) => {
   try {
     await ctx.reply(ctx.i18n.t('not_number'));
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -1843,7 +2071,9 @@ const showConfirmationButtons = async (
       reply_markup: { inline_keyboard: inlineKeyboard },
     });
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 

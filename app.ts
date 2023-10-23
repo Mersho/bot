@@ -11,13 +11,18 @@ const { delay } = require('./util');
 (async () => {
   process.on('unhandledRejection', e => {
     if (e) {
-      logger.error(`Unhandled Rejection: ${e}`);
+      if (e instanceof Error){
+        logger.error(`Unhandled Rejection: ${e.message}`, e);
+      }
+      // logger.error(`Unhandled Rejection: ${e}`);
     }
   });
 
   process.on('uncaughtException', e => {
     if (e) {
-      logger.error(`Uncaught Exception: ${e}`);
+      if (e instanceof Error){
+        logger.error(`uncaughtException: ${e.message}`, e);
+      }
     }
   });
 

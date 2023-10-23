@@ -1,9 +1,9 @@
-import { MainContext, OrderQuery, ctxUpdateAssertMsg } from "./start";
-import { ICommunity } from "../models/community";
-import { FilterQuery } from "mongoose";
-import { UserDocument } from "../models/user";
-import { IOrder } from "../models/order";
-import { Telegraf } from "telegraf";
+import { MainContext, OrderQuery, ctxUpdateAssertMsg } from './start';
+import { ICommunity } from '../models/community';
+import { FilterQuery } from 'mongoose';
+import { UserDocument } from '../models/user';
+import { IOrder } from '../models/order';
+import { Telegraf } from 'telegraf';
 
 const { parsePaymentRequest } = require('invoices');
 const { ObjectId } = require('mongoose').Types;
@@ -18,13 +18,11 @@ const logger = require('../logger');
 const validateUser = async (ctx: MainContext, start: boolean) => {
   try {
     let tgUser = null;
-    if (("callback_query" in ctx.update) && ctx.update.callback_query) {
+    if ('callback_query' in ctx.update && ctx.update.callback_query) {
       tgUser = ctx.update.callback_query.from;
-    }
-    else if (("message" in ctx.update) && ctx.update.message) {
+    } else if ('message' in ctx.update && ctx.update.message) {
       tgUser = ctx.update.message.from;
-    }
-    else {
+    } else {
       throw new Error(ctxUpdateAssertMsg);
     }
     // We need to make sure the user has a username
@@ -54,7 +52,9 @@ const validateUser = async (ctx: MainContext, start: boolean) => {
 
     return user;
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
     return false;
   }
 };
@@ -70,11 +70,14 @@ const validateSuperAdmin = async (ctx: MainContext, id?: string) => {
     // to that user, so we do nothing
     if (user === null) return;
 
-    if (!user.admin) return await messages.notAuthorized(ctx, tgUserId.toString());
+    if (!user.admin)
+      return await messages.notAuthorized(ctx, tgUserId.toString());
 
     return user;
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
     return false;
   }
 };
@@ -94,7 +97,7 @@ const validateAdmin = async (ctx: MainContext, id?: string) => {
     if (user.default_community_id)
       community = await Community.findOne({ _id: user.default_community_id });
 
-    if (community === null) throw Error("Community was not found in DB");
+    if (community === null) throw Error('Community was not found in DB');
     const isSolver = isDisputeSolver(community, user);
 
     if (!user.admin && !isSolver)
@@ -102,7 +105,9 @@ const validateAdmin = async (ctx: MainContext, id?: string) => {
 
     return user;
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
     return false;
   }
 };
@@ -190,7 +195,9 @@ const validateSellOrder = async (ctx: MainContext) => {
       priceMargin,
     };
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
     return false;
   }
 };
@@ -276,7 +283,9 @@ const validateBuyOrder = async (ctx: MainContext) => {
       priceMargin,
     };
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
     return false;
   }
 };
@@ -294,8 +303,12 @@ const validateInvoice = async (ctx: MainContext, lnInvoice: string) => {
     const latestDate = new Date(
       Date.now() + Number(process.env.INVOICE_EXPIRATION_WINDOW)
     ).toISOString();
-    if (!("MAIN_PAYMENT_AMT" in process.env)) throw Error("MIN_PAYMENT_AMT not found, please check .env file");
-    if (!!invoice.tokens && invoice.tokens < Number(process.env.MIN_PAYMENT_AMT)) {
+    if (!('MAIN_PAYMENT_AMT' in process.env))
+      throw Error('MIN_PAYMENT_AMT not found, please check .env file');
+    if (
+      !!invoice.tokens &&
+      invoice.tokens < Number(process.env.MIN_PAYMENT_AMT)
+    ) {
       await messages.minimunAmountInvoiceMessage(ctx);
       return false;
     }
@@ -322,7 +335,9 @@ const validateInvoice = async (ctx: MainContext, lnInvoice: string) => {
 
     return invoice;
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
     logger.debug(lnInvoice);
     return false;
   }
@@ -334,7 +349,10 @@ const isValidInvoice = async (ctx: MainContext, lnInvoice: string) => {
     const latestDate = new Date(
       Date.now() + Number(process.env.INVOICE_EXPIRATION_WINDOW)
     ).toISOString();
-    if (!!invoice.tokens && invoice.tokens < Number(process.env.MIN_PAYMENT_AMT)) {
+    if (
+      !!invoice.tokens &&
+      invoice.tokens < Number(process.env.MIN_PAYMENT_AMT)
+    ) {
       await messages.invoiceMustBeLargerMessage(ctx);
       return {
         success: false,
@@ -385,12 +403,19 @@ const isOrderCreator = (user: UserDocument, order: IOrder) => {
   try {
     return user._id == order.creator_id;
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
     return false;
   }
 };
 
-const validateTakeSellOrder = async (ctx: MainContext, bot: Telegraf<MainContext>, user: UserDocument, order: IOrder) => {
+const validateTakeSellOrder = async (
+  ctx: MainContext,
+  bot: Telegraf<MainContext>,
+  user: UserDocument,
+  order: IOrder
+) => {
   try {
     if (!order) {
       await messages.invalidOrderMessage(ctx, bot, user);
@@ -414,12 +439,19 @@ const validateTakeSellOrder = async (ctx: MainContext, bot: Telegraf<MainContext
 
     return true;
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
     return false;
   }
 };
 
-const validateTakeBuyOrder = async (ctx: MainContext, bot: Telegraf<MainContext>, user: UserDocument, order: IOrder) => {
+const validateTakeBuyOrder = async (
+  ctx: MainContext,
+  bot: Telegraf<MainContext>,
+  user: UserDocument,
+  order: IOrder
+) => {
   try {
     if (!order) {
       await messages.invalidOrderMessage(ctx, bot, user);
@@ -439,12 +471,18 @@ const validateTakeBuyOrder = async (ctx: MainContext, bot: Telegraf<MainContext>
     }
     return true;
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
     return false;
   }
 };
 
-const validateReleaseOrder = async (ctx: MainContext, user: UserDocument, orderId: string) => {
+const validateReleaseOrder = async (
+  ctx: MainContext,
+  user: UserDocument,
+  orderId: string
+) => {
   try {
     let where: FilterQuery<OrderQuery> = {
       seller_id: user._id,
@@ -482,12 +520,18 @@ const validateReleaseOrder = async (ctx: MainContext, user: UserDocument, orderI
 
     return order;
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
     return false;
   }
 };
 
-const validateDisputeOrder = async (ctx: MainContext, user: UserDocument, orderId: string) => {
+const validateDisputeOrder = async (
+  ctx: MainContext,
+  user: UserDocument,
+  orderId: string
+) => {
   try {
     const where = {
       $and: [
@@ -506,12 +550,18 @@ const validateDisputeOrder = async (ctx: MainContext, user: UserDocument, orderI
 
     return order;
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
     return false;
   }
 };
 
-const validateFiatSentOrder = async (ctx: MainContext, user: UserDocument, orderId: string) => {
+const validateFiatSentOrder = async (
+  ctx: MainContext,
+  user: UserDocument,
+  orderId: string
+) => {
   try {
     const where: FilterQuery<OrderQuery> = {
       $and: [
@@ -563,12 +613,18 @@ const validateSeller = async (ctx: MainContext, user: UserDocument) => {
 
     return true;
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
     return false;
   }
 };
 
-const validateParams = async (ctx: MainContext, paramNumber: number, errOutputString: string): Promise<null | Array<string>> => {
+const validateParams = async (
+  ctx: MainContext,
+  paramNumber: number,
+  errOutputString: string
+): Promise<null | Array<string>> => {
   try {
     if (!('message' in ctx.update) || !('text' in ctx.update.message)) {
       throw new Error(ctxUpdateAssertMsg);
@@ -586,7 +642,9 @@ const validateParams = async (ctx: MainContext, paramNumber: number, errOutputSt
 
     return params.slice(1);
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
     return null;
   }
 };
@@ -600,12 +658,18 @@ const validateObjectId = async (ctx: MainContext, id: string) => {
 
     return true;
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
     return false;
   }
 };
 
-const validateUserWaitingOrder = async (ctx: MainContext, bot: Telegraf<MainContext>, user: UserDocument) => {
+const validateUserWaitingOrder = async (
+  ctx: MainContext,
+  bot: Telegraf<MainContext>,
+  user: UserDocument
+) => {
   try {
     // If is a seller
     let where: FilterQuery<OrderQuery> = {
@@ -629,20 +693,29 @@ const validateUserWaitingOrder = async (ctx: MainContext, bot: Telegraf<MainCont
     }
     return true;
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
     return false;
   }
 };
 
 // We check if the user is banned from the community in the order
-const isBannedFromCommunity = async (user: UserDocument, communityId: string) => {
+const isBannedFromCommunity = async (
+  user: UserDocument,
+  communityId: string
+) => {
   try {
     if (!communityId) return false;
     const community = await Community.findOne({ _id: communityId });
     if (!community) return false;
-    return community.banned_users.toObject().some((buser: ICommunity) => buser.id == user._id);
+    return community.banned_users
+      .toObject()
+      .some((buser: ICommunity) => buser.id == user._id);
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
     return false;
   }
 };

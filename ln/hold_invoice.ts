@@ -27,7 +27,9 @@ const createHoldInvoice = async (description: string, amount: number) => {
     // We sent back the response hash (id) to be used on testing
     return { request, hash: id, secret: secret.toString('hex') };
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -35,7 +37,9 @@ const settleHoldInvoice = async ({ secret }: { secret: string }) => {
   try {
     await lightning.settleHodlInvoice({ lnd, secret });
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -43,7 +47,9 @@ const cancelHoldInvoice = async ({ hash }: { hash: string }) => {
   try {
     await lightning.cancelHodlInvoice({ lnd, id: hash });
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -51,7 +57,9 @@ const getInvoice = async ({ hash }: { hash: string }) => {
   try {
     return await lightning.getInvoice({ lnd, id: hash });
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 

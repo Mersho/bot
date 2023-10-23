@@ -124,7 +124,9 @@ const askForConfirmation = async (user: UserDocument, command: string) => {
 
     return [];
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
     return null;
   }
 };
@@ -152,7 +154,9 @@ const initialize = (
 
   const bot = new Telegraf<MainContext>(botToken, options);
   bot.catch(err => {
-    logger.error(err);
+    if (err instanceof Error) {
+      logger.error(`Error occurred: ${err.message}`, err, err.stack);
+    }
   });
 
   bot.use(session());
@@ -204,7 +208,9 @@ const initialize = (
       messages.startMessage(ctx);
       await validateUser(ctx, true);
     } catch (error) {
-      logger.error(error);
+      if (error instanceof Error) {
+        logger.error(`Error occurred: ${error.message}`, error, error.stack);
+      }
     }
   });
 
@@ -226,7 +232,9 @@ const initialize = (
         await config.save();
         await ctx.reply(ctx.i18n.t('operation_successful'));
       } catch (error) {
-        logger.error(error);
+        if (error instanceof Error) {
+          logger.error(`Error occurred: ${error.message}`, error, error.stack);
+        }
       }
     }
   );
@@ -240,7 +248,9 @@ const initialize = (
         next();
       }
     } catch (error) {
-      logger.error(error);
+      if (error instanceof Error) {
+        logger.error(`Error occurred: ${error.message}`, error, error.stack);
+      }
     }
   });
 
@@ -249,7 +259,9 @@ const initialize = (
       const pckg = require('../package.json');
       await ctx.reply(pckg.version);
     } catch (err) {
-      logger.error(err);
+      if (err instanceof Error) {
+        logger.error(`Error occurred: ${err.message}`, err, err.stack);
+      }
     }
   });
 
@@ -278,7 +290,9 @@ const initialize = (
         await release(ctx, orderId, ctx.user);
       }
     } catch (error) {
-      logger.error(error);
+      if (error instanceof Error) {
+        logger.error(`Error occurred: ${error.message}`, error, error.stack);
+      }
     }
   });
 
@@ -346,7 +360,9 @@ const initialize = (
       // we sent a private message to the buyer
       await messages.successCancelOrderByAdminMessage(ctx, bot, buyer, order);
     } catch (error) {
-      logger.error(error);
+      if (error instanceof Error) {
+        logger.error(`Error occurred: ${error.message}`, error, error.stack);
+      }
     }
   });
 
@@ -372,7 +388,9 @@ const initialize = (
         await cancelOrder(ctx, orderId, ctx.user);
       }
     } catch (error) {
-      logger.error(error);
+      if (error instanceof Error) {
+        logger.error(`Error occurred: ${error.message}`, error, error.stack);
+      }
     }
   });
 
@@ -394,7 +412,9 @@ const initialize = (
       // we sent a private message to the user
       await messages.successCancelAllOrdersMessage(ctx);
     } catch (error) {
-      logger.error(error);
+      if (error instanceof Error) {
+        logger.error(`Error occurred: ${error.message}`, error, error.stack);
+      }
     }
   });
 
@@ -453,7 +473,9 @@ const initialize = (
       // we sent a private message to the buyer
       await messages.successCompleteOrderByAdminMessage(ctx, bot, buyer, order);
     } catch (error) {
-      logger.error(error);
+      if (error instanceof Error) {
+        logger.error(`Error occurred: ${error.message}`, error, error.stack);
+      }
     }
   });
 
@@ -472,7 +494,9 @@ const initialize = (
         throw Error('buyer and/or seller were not found in DB');
       await messages.checkOrderMessage(ctx, order, buyer, seller);
     } catch (error) {
-      logger.error(error);
+      if (error instanceof Error) {
+        logger.error(`Error occurred: ${error.message}`, error, error.stack);
+      }
     }
   });
 
@@ -498,7 +522,9 @@ const initialize = (
           invoice.is_held
         );
       } catch (error) {
-        logger.error(error);
+        if (error instanceof Error) {
+          logger.error(`Error occurred: ${error.message}`, error, error.stack);
+        }
       }
     }
   );
@@ -523,7 +549,9 @@ const initialize = (
     try {
       await messages.helpMessage(ctx);
     } catch (error) {
-      logger.error(error);
+      if (error instanceof Error) {
+        logger.error(`Error occurred: ${error.message}`, error, error.stack);
+      }
     }
   });
 
@@ -531,7 +559,9 @@ const initialize = (
     try {
       await messages.disclaimerMessage(ctx);
     } catch (error) {
-      logger.error(error);
+      if (error instanceof Error) {
+        logger.error(`Error occurred: ${error.message}`, error, error.stack);
+      }
     }
   });
 
@@ -556,7 +586,9 @@ const initialize = (
         await fiatSent(ctx, orderId, ctx.user);
       }
     } catch (error) {
-      logger.error(error);
+      if (error instanceof Error) {
+        logger.error(`Error occurred: ${error.message}`, error, error.stack);
+      }
     }
   });
 
@@ -600,7 +632,9 @@ const initialize = (
       }
       await messages.userBannedMessage(ctx);
     } catch (error) {
-      logger.error(error);
+      if (error instanceof Error) {
+        logger.error(`Error occurred: ${error.message}`, error, error.stack);
+      }
     }
   });
 
@@ -643,7 +677,9 @@ const initialize = (
       }
       await messages.userUnBannedMessage(ctx);
     } catch (error) {
-      logger.error(error);
+      if (error instanceof Error) {
+        logger.error(`Error occurred: ${error.message}`, error, error.stack);
+      }
     }
   });
 
@@ -669,7 +705,9 @@ const initialize = (
       await ctx.user.save();
       await messages.successSetAddress(ctx);
     } catch (error) {
-      logger.error(error);
+      if (error instanceof Error) {
+        logger.error(`Error occurred: ${error.message}`, error, error.stack);
+      }
     }
   });
 
@@ -746,7 +784,9 @@ const initialize = (
 
       await order.save();
     } catch (error) {
-      logger.error(error);
+      if (error instanceof Error) {
+        logger.error(`Error occurred: ${error.message}`, error, error.stack);
+      }
     }
   });
 
@@ -854,7 +894,9 @@ const initialize = (
 
       await payToBuyer(bot, order);
     } catch (error) {
-      logger.error(error);
+      if (error instanceof Error) {
+        logger.error(`Error occurred: ${error.message}`, error, error.stack);
+      }
     }
   });
 
@@ -864,7 +906,9 @@ const initialize = (
 
       await messages.listCurrenciesResponse(ctx, currencies);
     } catch (error) {
-      logger.error(error);
+      if (error instanceof Error) {
+        logger.error(`Error occurred: ${error.message}`, error, error.stack);
+      }
     }
   });
 
@@ -874,7 +918,9 @@ const initialize = (
       if (config === null) throw Error('Config was not found in DB');
       await messages.showInfoMessage(ctx, ctx.user, config);
     } catch (error) {
-      logger.error(error);
+      if (error instanceof Error) {
+        logger.error(`Error occurred: ${error.message}`, error, error.stack);
+      }
     }
   });
 
@@ -887,7 +933,9 @@ const initialize = (
       await ctx.user.save();
       messages.updateUserSettingsMessage(ctx, 'showusername', show);
     } catch (error) {
-      logger.error(error);
+      if (error instanceof Error) {
+        logger.error(`Error occurred: ${error.message}`, error, error.stack);
+      }
     }
   });
 
@@ -900,7 +948,9 @@ const initialize = (
       await ctx.user.save();
       messages.updateUserSettingsMessage(ctx, 'showvolume', show);
     } catch (error) {
-      logger.error(error);
+      if (error instanceof Error) {
+        logger.error(`Error occurred: ${error.message}`, error, error.stack);
+      }
     }
   });
 
@@ -910,7 +960,9 @@ const initialize = (
 
       await ctx.reply(ctx.i18n.t('not_wizard'));
     } catch (error) {
-      logger.error(error);
+      if (error instanceof Error) {
+        logger.error(`Error occurred: ${error.message}`, error, error.stack);
+      }
     }
   });
 
@@ -928,7 +980,9 @@ const initialize = (
       }
       ctx.reply(message);
     } catch (error) {
-      logger.error(error);
+      if (error instanceof Error) {
+        logger.error(`Error occurred: ${error.message}`, error, error.stack);
+      }
     }
   });
 

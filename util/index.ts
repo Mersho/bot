@@ -128,7 +128,9 @@ const handleReputationItems = async (
     await buyer.save();
     await seller.save();
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -147,7 +149,9 @@ const getBtcFiatPrice = async (fiatCode: string, fiatAmount: number) => {
 
     return Number(sats);
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -158,7 +162,9 @@ const getBtcExchangePrice = (fiatAmount: number, satsAmount: number) => {
 
     return feeRate;
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -265,7 +271,9 @@ const isGroupAdmin = async (
       message: `@${user.username} is not an admin`,
     };
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
     return {
       success: false,
       message: String(error),
@@ -296,7 +304,9 @@ const deleteOrderFromChannel = async (order: IOrder, telegram: Telegram) => {
       message_id: Number(order.tg_channel_message1!),
     });
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
@@ -396,7 +406,9 @@ const getDetailedOrder = (
 
     return message;
   } catch (error) {
-    logger.error(error);
+    if (error instanceof Error) {
+      logger.error(`Error occurred: ${error.message}`, error, error.stack);
+    }
   }
 };
 
