@@ -1,8 +1,8 @@
-import { Telegraf } from "telegraf";
-import { MainContext } from "../bot/start";
+import { Telegraf } from 'telegraf';
+import { MainContext } from '../bot/start';
 
 import { Order, Community } from '../models';
-import logger from "../logger";
+import { logger } from '../logger';
 
 const deleteCommunity = async (bot: Telegraf<MainContext>) => {
   try {

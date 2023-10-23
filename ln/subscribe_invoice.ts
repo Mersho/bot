@@ -1,27 +1,32 @@
-import { Telegraf } from "telegraf";
-import { MainContext } from "../bot/start";
-import {subscribeToInvoice} from 'lightning'
+import { Telegraf } from 'telegraf';
+import { MainContext } from '../bot/start';
+import { subscribeToInvoice } from 'lightning';
 import { Order, User } from '../models';
 const { payToBuyer } = require('./pay_request');
-import { lnd } from "./connect";
+import { lnd } from './connect';
 import * as messages from '../bot/messages';
 const ordersActions = require('../bot/ordersActions');
 const { getUserI18nContext, getEmojiRate, decimalRound } = require('../util');
-import logger from "../logger";
+import { logger } from '../logger';
 
-const subscribeInvoice = async (bot: Telegraf<MainContext>, id: string, resub: boolean) => {
+const subscribeInvoice = async (
+  bot: Telegraf<MainContext>,
+  id: string,
+  resub: boolean
+) => {
   try {
     const sub = subscribeToInvoice({ id, lnd });
     sub.on('invoice_updated', async invoice => {
       if (invoice.is_held && !resub) {
         const order = await Order.findOne({ hash: invoice.id });
-        if (order === null) throw Error("Order was not found in DB");
+        if (order === null) throw Error('Order was not found in DB');
         logger.info(
           `Order ${order._id} Invoice with hash: ${id} is being held!`
         );
         const buyerUser = await User.findOne({ _id: order.buyer_id });
         const sellerUser = await User.findOne({ _id: order.seller_id });
-        if (buyerUser === null || sellerUser === null) throw Error("buyer or seller was not found in DB");
+        if (buyerUser === null || sellerUser === null)
+          throw Error('buyer or seller was not found in DB');
         order.status = 'ACTIVE';
         // This is the i18n context we need to pass to the message
         const i18nCtxBuyer = await getUserI18nContext(buyerUser);
@@ -56,7 +61,7 @@ const subscribeInvoice = async (bot: Telegraf<MainContext>, id: string, resub: b
       }
       if (invoice.is_confirmed) {
         const order = await Order.findOne({ hash: id });
-        if (order === null) throw Error("Order was not found in DB");
+        if (order === null) throw Error('Order was not found in DB');
         logger.info(
           `Order ${order._id} - Invoice with hash: ${id} was settled!`
         );
@@ -64,7 +69,8 @@ const subscribeInvoice = async (bot: Telegraf<MainContext>, id: string, resub: b
         await order.save();
         const buyerUser = await User.findOne({ _id: order.buyer_id });
         const sellerUser = await User.findOne({ _id: order.seller_id });
-        if (buyerUser === null || sellerUser === null) throw Error("buyer and/or seller was not found in DB");
+        if (buyerUser === null || sellerUser === null)
+          throw Error('buyer and/or seller was not found in DB');
         // We need two i18n contexts to send messages to each user
         const i18nCtxBuyer = await getUserI18nContext(buyerUser);
         const i18nCtxSeller = await getUserI18nContext(sellerUser);

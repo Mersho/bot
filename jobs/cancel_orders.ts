@@ -1,17 +1,17 @@
-import { Telegraf } from "telegraf";
-import { MainContext } from "../bot/start";
-import { User, Order } from "../models";
+import { Telegraf } from 'telegraf';
+import { MainContext } from '../bot/start';
+import { User, Order } from '../models';
 const { cancelShowHoldInvoice, cancelAddInvoice } = require('../bot/commands');
-import * as messages from "../bot/messages";
+import * as messages from '../bot/messages';
 import { getUserI18nContext, holdInvoiceExpirationInSecs } from '../util';
-import logger from "../logger";
+import { logger } from '../logger';
 
 const cancelOrders = async (bot: Telegraf<MainContext>) => {
   try {
     const holdInvoiceTime = new Date();
     holdInvoiceTime.setSeconds(
       holdInvoiceTime.getSeconds() -
-      Number(process.env.HOLD_INVOICE_EXPIRATION_WINDOW)
+        Number(process.env.HOLD_INVOICE_EXPIRATION_WINDOW)
     );
     // We get the orders where the seller didn't pay the hold invoice before expired
     // or where the buyer didn't add the invoice

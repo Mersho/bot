@@ -1,15 +1,15 @@
-import { I18nContext } from "@grammyjs/i18n";
-import { ICommunity, IOrderChannel } from "../models/community";
-import { IOrder } from "../models/order";
-import { UserDocument } from "../models/user";
-import { IFiatCurrencies, IFiat } from "./fiatModel";
-import { ILanguage, ILanguages } from "./languagesModel";
-import { Telegram } from "telegraf/typings/core/types/typegram";
-import axios from "axios";
+import { I18nContext } from '@grammyjs/i18n';
+import { ICommunity, IOrderChannel } from '../models/community';
+import { IOrder } from '../models/order';
+import { UserDocument } from '../models/user';
+import { IFiatCurrencies, IFiat } from './fiatModel';
+import { ILanguage, ILanguages } from './languagesModel';
+import { Telegram } from 'telegraf/typings/core/types/typegram';
+import axios from 'axios';
 import fiatJson from './fiat.json';
 import languagesJson from './languages.json';
-import { Order, Community } from "../models";
-import logger from "../logger";
+import { Order, Community } from '../models';
+import { logger } from '../logger';
 const { I18n } = require('@grammyjs/i18n');
 
 const languages: ILanguages = languagesJson;
@@ -21,7 +21,7 @@ const isIso4217 = (code: string): boolean => {
     return false;
   }
   const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('');
-  code = code.toLowerCase()
+  code = code.toLowerCase();
   return code.split('').every(letter => {
     if (alphabet.indexOf(letter) == -1) {
       return false;
@@ -30,7 +30,7 @@ const isIso4217 = (code: string): boolean => {
   });
 };
 
-const getCurrency = (code: string): (IFiat | null) => {
+const getCurrency = (code: string): IFiat | null => {
   if (!isIso4217(code)) return null;
   const currency = currencies[code];
   if (!currency) return null;
@@ -63,7 +63,11 @@ const numberFormat = (code: string, number: number) => {
 // This function checks if the current buyer and seller were doing circular operations
 // In order to increase their trades_completed and volume_traded.
 // If we found those trades in the last 24 hours we decrease both variables to both users
-const handleReputationItems = async (buyer: UserDocument, seller: UserDocument, amount: number) => {
+const handleReputationItems = async (
+  buyer: UserDocument,
+  seller: UserDocument,
+  amount: number
+) => {
   try {
     const yesterday = new Date(Date.now() - 86400000).toISOString();
     const orders = await Order.find({
@@ -131,7 +135,7 @@ const handleReputationItems = async (buyer: UserDocument, seller: UserDocument, 
 const getBtcFiatPrice = async (fiatCode: string, fiatAmount: number) => {
   try {
     const currency = getCurrency(fiatCode);
-    if (currency === null) throw Error("Currency not found");
+    if (currency === null) throw Error('Currency not found');
     if (!currency.price) return;
     // Before hit the endpoint we make sure the code have only 3 chars
     const code = currency.code.substring(0, 3);
@@ -196,15 +200,17 @@ const decimalRound = (value: number, exp: number): number => {
   }
   // Shift
   let valueArr = value.toString().split('e');
-  value = Math.round(+(valueArr[0] + 'e' + (valueArr[1] ? +valueArr[1] - exp : -exp)));
+  value = Math.round(
+    +(valueArr[0] + 'e' + (valueArr[1] ? +valueArr[1] - exp : -exp))
+  );
   // Shift back
   valueArr = value.toString().split('e');
   return +(valueArr[0] + 'e' + (valueArr[1] ? +valueArr[1] + exp : exp));
 };
 
-const extractId = (text: string): (string | null) => {
+const extractId = (text: string): string | null => {
   const matches = text.match(/:([a-f0-9]{24}):$/);
-  if (matches !== null){
+  if (matches !== null) {
     return matches?.[1];
   }
   return null;
@@ -229,9 +235,16 @@ const secondsToTime = (secs: number) => {
   };
 };
 
-const isGroupAdmin = async (groupId: string, user: UserDocument, telegram: Telegram) => {
+const isGroupAdmin = async (
+  groupId: string,
+  user: UserDocument,
+  telegram: Telegram
+) => {
   try {
-    const member = await telegram.getChatMember({chat_id: groupId, user_id: Number(user.tg_id)});
+    const member = await telegram.getChatMember({
+      chat_id: groupId,
+      user_id: Number(user.tg_id),
+    });
     if (
       member &&
       (member.status === 'creator' || member.status === 'administrator')
@@ -278,7 +291,10 @@ const deleteOrderFromChannel = async (order: IOrder, telegram: Telegram) => {
         }
       }
     }
-    await telegram.deleteMessage({chat_id: channel!, message_id: Number(order.tg_channel_message1!)});
+    await telegram.deleteMessage({
+      chat_id: channel!,
+      message_id: Number(order.tg_channel_message1!),
+    });
   } catch (error) {
     logger.error(error);
   }
@@ -309,7 +325,7 @@ const getDisputeChannel = async (order: IOrder) => {
   let channel = process.env.DISPUTE_CHANNEL;
   if (order.community_id) {
     const community = await Community.findOne({ _id: order.community_id });
-    if (community === null) throw Error("Community was not found in DB");
+    if (community === null) throw Error('Community was not found in DB');
     channel = community.dispute_channel;
   }
 
@@ -337,7 +353,12 @@ const getUserI18nContext = async (user: UserDocument) => {
   return i18n.createContext(user.lang);
 };
 
-const getDetailedOrder = (i18n: I18nContext, order: IOrder, buyer: UserDocument, seller: UserDocument) => {
+const getDetailedOrder = (
+  i18n: I18nContext,
+  order: IOrder,
+  buyer: UserDocument,
+  seller: UserDocument
+) => {
   try {
     const buyerUsername = buyer ? sanitizeMD(buyer.username) : '';
     const buyerReputation = buyer
@@ -397,7 +418,7 @@ const getFee = async (amount: number, communityId: string) => {
   const botFee = maxFee * Number(process.env.FEE_PERCENT);
   let communityFee = Math.round(maxFee - botFee);
   const community = await Community.findOne({ _id: communityId });
-  if (community === null) throw Error("Community was not found in DB");
+  if (community === null) throw Error('Community was not found in DB');
   communityFee = communityFee * (community.fee / 100);
 
   return botFee + communityFee;

@@ -1,9 +1,9 @@
-import { Telegraf } from "telegraf";
-import { MainContext } from "../bot/start";
+import { Telegraf } from 'telegraf';
+import { MainContext } from '../bot/start';
 
 import { Order } from '../models';
 const { deleteOrderFromChannel } = require('../util');
-import logger from "../logger";
+import { logger } from '../logger';
 
 const deleteOrders = async (bot: Telegraf<MainContext>) => {
   try {

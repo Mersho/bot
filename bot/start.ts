@@ -1,9 +1,9 @@
 import { Telegraf, session, Context } from 'telegraf';
 import { I18n, I18nContext } from '@grammyjs/i18n';
-import { Message } from 'typegram'
-import { UserDocument } from '../models/user'
+import { Message } from 'typegram';
+import { UserDocument } from '../models/user';
 import { FilterQuery } from 'mongoose';
-import { limit } from "@grammyjs/ratelimiter"
+import { limit } from '@grammyjs/ratelimiter';
 import schedule from 'node-schedule';
 import {
   Order,
@@ -65,7 +65,7 @@ const {
   deleteCommunity,
   nodeInfo,
 } = require('../jobs');
-import logger from "../logger";
+import { logger } from '../logger';
 import { ICommunity, IUsernameId } from '../models/community';
 
 export interface MainContext extends Context {
@@ -95,13 +95,13 @@ const askForConfirmation = async (user: UserDocument, command: string) => {
               { status: 'DISPUTE' },
             ],
           },
-        ]
+        ],
       };
       const orders = await Order.find(where);
       return orders;
     } else if (command === '/fiatsent') {
       const where: FilterQuery<OrderQuery> = {
-        $and: [{ buyer_id: user._id }, { status: 'ACTIVE' }]
+        $and: [{ buyer_id: user._id }, { status: 'ACTIVE' }],
       };
       const orders = await Order.find(where);
       return orders;
@@ -116,7 +116,7 @@ const askForConfirmation = async (user: UserDocument, command: string) => {
               { status: 'DISPUTE' },
             ],
           },
-        ]
+        ],
       };
       const orders = await Order.find(where);
       return orders;
@@ -138,9 +138,12 @@ has the same condition.
 The problem mentioned above is similar to this issue:
 https://github.com/telegraf/telegraf/issues/1319#issuecomment-766360594
 */
-export const ctxUpdateAssertMsg = "ctx.update.message.text is not available.";
+export const ctxUpdateAssertMsg = 'ctx.update.message.text is not available.';
 
-const initialize = (botToken: string, options: Partial<Telegraf.Options<MainContext>>): Telegraf<MainContext> => {
+const initialize = (
+  botToken: string,
+  options: Partial<Telegraf.Options<MainContext>>
+): Telegraf<MainContext> => {
   const i18n = new I18n({
     defaultLanguageOnMissing: true, // implies allowMissing = true
     directory: 'locales',
@@ -192,7 +195,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
 
   bot.start(async (ctx: MainContext) => {
     try {
-      if (!('message' in ctx.update) || !('text' in ctx.update.message)){
+      if (!('message' in ctx.update) || !('text' in ctx.update.message)) {
         throw new Error(ctxUpdateAssertMsg);
       }
       const tgUser = ctx.update.message.from;
@@ -205,24 +208,28 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
     }
   });
 
-  bot.command('maintenance', superAdminMiddleware, async (ctx: MainContext): Promise<void> => {
-    try {
-      const [val] = await validateParams(ctx, 2, '\\<_on/off_\\>');
-      if (!val) return;
-      let config = await Config.findOne();
-      if (config === null) {
-        config = new Config();
+  bot.command(
+    'maintenance',
+    superAdminMiddleware,
+    async (ctx: MainContext): Promise<void> => {
+      try {
+        const [val] = await validateParams(ctx, 2, '\\<_on/off_\\>');
+        if (!val) return;
+        let config = await Config.findOne();
+        if (config === null) {
+          config = new Config();
+        }
+        config.maintenance = false;
+        if (val == 'on') {
+          config.maintenance = true;
+        }
+        await config.save();
+        await ctx.reply(ctx.i18n.t('operation_successful'));
+      } catch (error) {
+        logger.error(error);
       }
-      config.maintenance = false;
-      if (val == 'on') {
-        config.maintenance = true;
-      }
-      await config.save();
-      await ctx.reply(ctx.i18n.t('operation_successful'));
-    } catch (error) {
-      logger.error(error);
     }
-  });
+  );
 
   bot.on('text', userMiddleware, async (ctx: MainContext, next: () => void) => {
     try {
@@ -253,7 +260,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
 
   bot.command('release', userMiddleware, async ctx => {
     try {
-      if (!('message' in ctx.update) || !('text' in ctx.update.message)){
+      if (!('message' in ctx.update) || !('text' in ctx.update.message)) {
         throw new Error(ctxUpdateAssertMsg);
       }
       const params = ctx.update.message.text.split(' ');
@@ -261,7 +268,8 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
 
       if (!orderId) {
         const orders = await askForConfirmation(ctx.user, command);
-        if (orders === null || orders.length === 0) return await ctx.reply(`${command} <order Id>`);
+        if (orders === null || orders.length === 0)
+          return await ctx.reply(`${command} <order Id>`);
 
         return await messages.showConfirmationButtons(ctx, orders, command);
       } else if (!(await validateObjectId(ctx, orderId))) {
@@ -329,7 +337,8 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
       await order.save();
       const buyer = await User.findOne({ _id: order.buyer_id });
       const seller = await User.findOne({ _id: order.seller_id });
-      if (buyer === null || seller === null) throw Error("buyer and/or seller were not found in DB");
+      if (buyer === null || seller === null)
+        throw Error('buyer and/or seller were not found in DB');
       // we sent a private message to the admin
       await messages.successCancelOrderMessage(ctx, ctx.admin, order, ctx.i18n);
       // we sent a private message to the seller
@@ -345,7 +354,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
   // pending orders are the ones that are not taken by another user
   bot.command('cancel', userMiddleware, async (ctx: MainContext) => {
     try {
-      if (!('message' in ctx.update) || !('text' in ctx.update.message)){
+      if (!('message' in ctx.update) || !('text' in ctx.update.message)) {
         throw new Error(ctxUpdateAssertMsg);
       }
       const params = ctx.update.message.text.split(' ');
@@ -353,7 +362,8 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
 
       if (!orderId) {
         const orders = await askForConfirmation(ctx.user, command);
-        if (orders === null || orders.length === 0) return await ctx.reply(`${command}  <order Id>`);
+        if (orders === null || orders.length === 0)
+          return await ctx.reply(`${command}  <order Id>`);
 
         return await messages.showConfirmationButtons(ctx, orders, command);
       } else if (!(await validateObjectId(ctx, orderId))) {
@@ -429,7 +439,8 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
       await order.save();
       const buyer = await User.findOne({ _id: order.buyer_id });
       const seller = await User.findOne({ _id: order.seller_id });
-      if (buyer === null || seller === null) throw Error("buyer and/or seller were not found in DB");
+      if (buyer === null || seller === null)
+        throw Error('buyer and/or seller were not found in DB');
       // we sent a private message to the admin
       await messages.successCompleteOrderMessage(ctx, order);
       // we sent a private message to the seller
@@ -457,35 +468,40 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
 
       const buyer = await User.findOne({ _id: order.buyer_id });
       const seller = await User.findOne({ _id: order.seller_id });
-      if (buyer === null || seller === null) throw Error("buyer and/or seller were not found in DB");
+      if (buyer === null || seller === null)
+        throw Error('buyer and/or seller were not found in DB');
       await messages.checkOrderMessage(ctx, order, buyer, seller);
     } catch (error) {
       logger.error(error);
     }
   });
 
-  bot.command('checkinvoice', superAdminMiddleware, async (ctx: MainContext) => {
-    try {
-      const [orderId] = await validateParams(ctx, 2, '\\<_order id_\\>');
-      if (!orderId) return;
-      if (!(await validateObjectId(ctx, orderId))) return;
-      const order = await Order.findOne({ _id: orderId });
+  bot.command(
+    'checkinvoice',
+    superAdminMiddleware,
+    async (ctx: MainContext) => {
+      try {
+        const [orderId] = await validateParams(ctx, 2, '\\<_order id_\\>');
+        if (!orderId) return;
+        if (!(await validateObjectId(ctx, orderId))) return;
+        const order = await Order.findOne({ _id: orderId });
 
-      if (order === null) return;
-      if (!order.hash) return;
+        if (order === null) return;
+        if (!order.hash) return;
 
-      const invoice = await getInvoice({ hash: order.hash });
+        const invoice = await getInvoice({ hash: order.hash });
 
-      await messages.checkInvoiceMessage(
-        ctx,
-        invoice.is_confirmed,
-        invoice.is_canceled,
-        invoice.is_held
-      );
-    } catch (error) {
-      logger.error(error);
+        await messages.checkInvoiceMessage(
+          ctx,
+          invoice.is_confirmed,
+          invoice.is_canceled,
+          invoice.is_held
+        );
+      } catch (error) {
+        logger.error(error);
+      }
     }
-  });
+  );
 
   bot.command('resubscribe', superAdminMiddleware, async (ctx: MainContext) => {
     try {
@@ -522,7 +538,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
   // Only buyers can use this command
   bot.command('fiatsent', userMiddleware, async (ctx: MainContext) => {
     try {
-      if (!('message' in ctx.update) || !('text' in ctx.update.message)){
+      if (!('message' in ctx.update) || !('text' in ctx.update.message)) {
         throw new Error(ctxUpdateAssertMsg);
       }
       const params = ctx.update.message.text.split(' ');
@@ -530,7 +546,8 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
 
       if (!orderId) {
         const orders = await askForConfirmation(ctx.user, command);
-        if (orders === null || orders.length === 0) return await ctx.reply(`${command} <order Id>`);
+        if (orders === null || orders.length === 0)
+          return await ctx.reply(`${command} <order Id>`);
 
         return await messages.showConfirmationButtons(ctx, orders, command);
       } else if (!(await validateObjectId(ctx, orderId))) {
@@ -568,7 +585,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
           const community = await Community.findById(
             ctx.admin.default_community_id
           );
-          if (community === null) throw Error("Community was not found in DB");
+          if (community === null) throw Error('Community was not found in DB');
           community.banned_users.push({
             id: user._id,
             username: user.username,
@@ -612,10 +629,10 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
           const community = await Community.findById(
             ctx.admin.default_community_id
           );
-          if (community === null) throw Error("Community was not found in DB");
-          community.banned_users = community.banned_users.toObject().filter(
-            (el: IUsernameId) => el.id !== user.id
-          );
+          if (community === null) throw Error('Community was not found in DB');
+          community.banned_users = community.banned_users
+            .toObject()
+            .filter((el: IUsernameId) => el.id !== user.id);
           await community.save();
         } else {
           return await ctx.reply(ctx.i18n.t('need_default_community'));
@@ -739,55 +756,83 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
     await addInvoice(ctx, bot);
   });
 
-  bot.action('cancelAddInvoiceBtn', userMiddleware, async (ctx: MainContext) => {
-    await cancelAddInvoice(ctx);
-  });
+  bot.action(
+    'cancelAddInvoiceBtn',
+    userMiddleware,
+    async (ctx: MainContext) => {
+      await cancelAddInvoice(ctx);
+    }
+  );
 
   bot.action('showHoldInvoiceBtn', userMiddleware, async (ctx: MainContext) => {
     await showHoldInvoice(ctx, bot);
   });
 
-  bot.action('cancelShowHoldInvoiceBtn', userMiddleware, async (ctx: MainContext) => {
-    await cancelShowHoldInvoice(ctx);
-  });
-
-  bot.action(/^showStarBtn\(([1-5]),(\w{24})\)$/, userMiddleware, async (ctx: MainContext) => {
-    if (ctx.match === null) {
-      throw new Error("ctx.match should not be null");
+  bot.action(
+    'cancelShowHoldInvoiceBtn',
+    userMiddleware,
+    async (ctx: MainContext) => {
+      await cancelShowHoldInvoice(ctx);
     }
-    await rateUser(ctx, bot, ctx.match[1], ctx.match[2]);
-  });
+  );
 
-  bot.action(/^addInvoicePHIBtn_([0-9a-f]{24})$/, userMiddleware, async (ctx: MainContext) => {
-    if (ctx.match === null) {
-      throw new Error("ctx.match should not be null");
+  bot.action(
+    /^showStarBtn\(([1-5]),(\w{24})\)$/,
+    userMiddleware,
+    async (ctx: MainContext) => {
+      if (ctx.match === null) {
+        throw new Error('ctx.match should not be null');
+      }
+      await rateUser(ctx, bot, ctx.match[1], ctx.match[2]);
     }
-    await addInvoicePHI(ctx, bot, ctx.match[1]);
-  });
+  );
 
-  bot.action(/^cancel_([0-9a-f]{24})$/, userMiddleware, async (ctx: MainContext) => {
-    if (ctx.match === null) {
-      throw new Error("ctx.match should not be null");
+  bot.action(
+    /^addInvoicePHIBtn_([0-9a-f]{24})$/,
+    userMiddleware,
+    async (ctx: MainContext) => {
+      if (ctx.match === null) {
+        throw new Error('ctx.match should not be null');
+      }
+      await addInvoicePHI(ctx, bot, ctx.match[1]);
     }
-    ctx.deleteMessage();
-    await cancelOrder(ctx, ctx.match[1]);
-  });
+  );
 
-  bot.action(/^fiatsent_([0-9a-f]{24})$/, userMiddleware, async (ctx: MainContext) => {
-    if (ctx.match === null) {
-      throw new Error("ctx.match should not be null");
+  bot.action(
+    /^cancel_([0-9a-f]{24})$/,
+    userMiddleware,
+    async (ctx: MainContext) => {
+      if (ctx.match === null) {
+        throw new Error('ctx.match should not be null');
+      }
+      ctx.deleteMessage();
+      await cancelOrder(ctx, ctx.match[1]);
     }
-    ctx.deleteMessage();
-    await fiatSent(ctx, ctx.match[1]);
-  });
+  );
 
-  bot.action(/^release_([0-9a-f]{24})$/, userMiddleware, async (ctx: MainContext) => {
-    if (ctx.match === null) {
-      throw new Error("ctx.match should not be null");
+  bot.action(
+    /^fiatsent_([0-9a-f]{24})$/,
+    userMiddleware,
+    async (ctx: MainContext) => {
+      if (ctx.match === null) {
+        throw new Error('ctx.match should not be null');
+      }
+      ctx.deleteMessage();
+      await fiatSent(ctx, ctx.match[1]);
     }
-    ctx.deleteMessage();
-    await release(ctx, ctx.match[1]);
-  });
+  );
+
+  bot.action(
+    /^release_([0-9a-f]{24})$/,
+    userMiddleware,
+    async (ctx: MainContext) => {
+      if (ctx.match === null) {
+        throw new Error('ctx.match should not be null');
+      }
+      ctx.deleteMessage();
+      await release(ctx, ctx.match[1]);
+    }
+  );
 
   bot.command('paytobuyer', superAdminMiddleware, async (ctx: MainContext) => {
     try {
@@ -826,7 +871,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
   bot.command('info', userMiddleware, async (ctx: MainContext) => {
     try {
       const config = await Config.findOne({});
-      if (config === null) throw Error("Config was not found in DB");
+      if (config === null) throw Error('Config was not found in DB');
       await messages.showInfoMessage(ctx, ctx.user, config);
     } catch (error) {
       logger.error(error);
@@ -890,7 +935,10 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
   return bot;
 };
 
-const start = (botToken: string, options: Partial<Telegraf.Options<MainContext>>): Telegraf<MainContext> => {
+const start = (
+  botToken: string,
+  options: Partial<Telegraf.Options<MainContext>>
+): Telegraf<MainContext> => {
   const bot = initialize(botToken, options);
 
   bot.launch();

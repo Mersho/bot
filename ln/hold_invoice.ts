@@ -1,12 +1,13 @@
 import { randomBytes, createHash } from 'crypto';
-import * as lightning from "lightning";
-import { lnd } from './connect'
-import logger from "../logger";
+import * as lightning from 'lightning';
+import { lnd } from './connect';
+import { logger } from '../logger';
 
-const createHoldInvoice = async (description: string, amount: number ) => {
+const createHoldInvoice = async (description: string, amount: number) => {
   try {
     const randomSecret = () => randomBytes(32);
-    const sha256 = (buffer: Buffer): string => createHash('sha256').update(buffer).digest('hex');
+    const sha256 = (buffer: Buffer): string =>
+      createHash('sha256').update(buffer).digest('hex');
     // We create a random secret
     const secret = randomSecret();
     const expiresAt = new Date();
@@ -30,7 +31,7 @@ const createHoldInvoice = async (description: string, amount: number ) => {
   }
 };
 
-const settleHoldInvoice = async ( { secret }: { secret: string } ) => {
+const settleHoldInvoice = async ({ secret }: { secret: string }) => {
   try {
     await lightning.settleHodlInvoice({ lnd, secret });
   } catch (error) {
@@ -38,7 +39,7 @@ const settleHoldInvoice = async ( { secret }: { secret: string } ) => {
   }
 };
 
-const cancelHoldInvoice = async ( { hash }: { hash: string } ) => {
+const cancelHoldInvoice = async ({ hash }: { hash: string }) => {
   try {
     await lightning.cancelHodlInvoice({ lnd, id: hash });
   } catch (error) {
@@ -46,7 +47,7 @@ const cancelHoldInvoice = async ( { hash }: { hash: string } ) => {
   }
 };
 
-const getInvoice = async ( { hash }: { hash: string } ) => {
+const getInvoice = async ({ hash }: { hash: string }) => {
   try {
     return await lightning.getInvoice({ lnd, id: hash });
   } catch (error) {
@@ -54,9 +55,4 @@ const getInvoice = async ( { hash }: { hash: string } ) => {
   }
 };
 
-export {
-  createHoldInvoice,
-  settleHoldInvoice,
-  cancelHoldInvoice,
-  getInvoice,
-};
+export { createHoldInvoice, settleHoldInvoice, cancelHoldInvoice, getInvoice };

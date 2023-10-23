@@ -1,13 +1,15 @@
 import { PendingPayment, Order, User, Community } from '../models';
 import * as messages from '../bot/messages';
-import logger from "../logger";
+import { logger } from '../logger';
 import { Telegraf } from 'telegraf';
 import { I18nContext } from '@grammyjs/i18n';
 import { MainContext } from '../bot/start';
 const { payRequest, isPendingPayment } = require('../ln');
 const { getUserI18nContext } = require('../util');
 
-export const attemptPendingPayments = async (bot: Telegraf<MainContext>): Promise<void> => {
+export const attemptPendingPayments = async (
+  bot: Telegraf<MainContext>
+): Promise<void> => {
   const pendingPayments = await PendingPayment.find({
     paid: false,
     attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
@@ -17,7 +19,7 @@ export const attemptPendingPayments = async (bot: Telegraf<MainContext>): Promis
   for (const pending of pendingPayments) {
     const order = await Order.findOne({ _id: pending.order_id });
     try {
-      if (order === null) throw Error("Order was not found in DB");
+      if (order === null) throw Error('Order was not found in DB');
       pending.attempts++;
       if (order.status === 'SUCCESS') {
         pending.paid = true;
@@ -26,10 +28,14 @@ export const attemptPendingPayments = async (bot: Telegraf<MainContext>): Promis
         return;
       }
       // We check if the old payment is on flight
-      const isPendingOldPayment: boolean = await isPendingPayment(order.buyer_invoice);
+      const isPendingOldPayment: boolean = await isPendingPayment(
+        order.buyer_invoice
+      );
 
       // We check if this new payment is on flight
-      const isPending: boolean = await isPendingPayment(pending.payment_request);
+      const isPending: boolean = await isPendingPayment(
+        pending.payment_request
+      );
 
       // If one of the payments is on flight we don't do anything
       if (isPending || isPendingOldPayment) return;
@@ -39,7 +45,7 @@ export const attemptPendingPayments = async (bot: Telegraf<MainContext>): Promis
         request: pending.payment_request,
       });
       const buyerUser = await User.findOne({ _id: order.buyer_id });
-      if (buyerUser === null) throw Error("buyerUser was not found in DB");
+      if (buyerUser === null) throw Error('buyerUser was not found in DB');
       const i18nCtx: I18nContext = await getUserI18nContext(buyerUser);
       // If the buyer's invoice is expired we let it know and don't try to pay again
       if (!!payment && payment.is_expired) {
@@ -63,7 +69,7 @@ export const attemptPendingPayments = async (bot: Telegraf<MainContext>): Promis
         await buyerUser.save();
         // We add a new completed trade for the seller
         const sellerUser = await User.findOne({ _id: order.seller_id });
-        if (sellerUser === null) throw Error("sellerUser was not found in DB");
+        if (sellerUser === null) throw Error('sellerUser was not found in DB');
         sellerUser.trades_completed++;
         sellerUser.save();
         logger.info(`Invoice with hash: ${pending.hash} paid`);
@@ -116,7 +122,9 @@ export const attemptPendingPayments = async (bot: Telegraf<MainContext>): Promis
   }
 };
 
-export const attemptCommunitiesPendingPayments = async (bot: Telegraf<MainContext>): Promise<void> => {
+export const attemptCommunitiesPendingPayments = async (
+  bot: Telegraf<MainContext>
+): Promise<void> => {
   const pendingPayments = await PendingPayment.find({
     paid: false,
     attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
@@ -129,7 +137,9 @@ export const attemptCommunitiesPendingPayments = async (bot: Telegraf<MainContex
       pending.attempts++;
 
       // We check if this new payment is on flight
-      const isPending: boolean = await isPendingPayment(pending.payment_request);
+      const isPending: boolean = await isPendingPayment(
+        pending.payment_request
+      );
 
       // If the payments is on flight we don't do anything
       if (isPending) return;
@@ -139,7 +149,7 @@ export const attemptCommunitiesPendingPayments = async (bot: Telegraf<MainContex
         request: pending.payment_request,
       });
       const user = await User.findById(pending.user_id);
-      if (user === null) throw Error("User was not found in DB");
+      if (user === null) throw Error('User was not found in DB');
       const i18nCtx: I18nContext = await getUserI18nContext(user);
       // If the buyer's invoice is expired we let it know and don't try to pay again
       if (!!payment && payment.is_expired) {
@@ -151,7 +161,7 @@ export const attemptCommunitiesPendingPayments = async (bot: Telegraf<MainContex
       }
 
       const community = await Community.findById(pending.community_id);
-      if (community === null) throw Error("Community was not found in DB");
+      if (community === null) throw Error('Community was not found in DB');
       if (!!payment && !!payment.confirmed_at) {
         pending.paid = true;
         pending.paid_at = new Date();
