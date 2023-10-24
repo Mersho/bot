@@ -6,12 +6,12 @@ import { IOrder } from "../models/order";
 import { Telegraf } from "telegraf";
 
 const { parsePaymentRequest } = require('invoices');
-const { ObjectId } = require('mongoose').Types;
+import { Types } from 'mongoose';
 import * as messages from './messages';
 import { Order, User, Community } from '../models';
-const { isIso4217, isDisputeSolver } = require('../util');
-const { existLightningAddress } = require('../lnurl/lnurl-pay');
-const logger = require('../logger');
+import { isIso4217, isDisputeSolver } from '../util';
+import { existLightningAddress } from '../lnurl/lnurl-pay';
+import { logger } from '../logger';
 
 // We look in database if the telegram user exists,
 // if not, it creates a new user
@@ -593,7 +593,7 @@ const validateParams = async (ctx: MainContext, paramNumber: number, errOutputSt
 
 const validateObjectId = async (ctx: MainContext, id: string) => {
   try {
-    if (!ObjectId.isValid(id)) {
+    if (!Types.ObjectId.isValid(id)) {
       await messages.notValidIdMessage(ctx);
       return false;
     }
