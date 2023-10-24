@@ -6,7 +6,7 @@
   "main": "app.js",
   "scripts": {
     "prestart": "tsc",
-    "start": "node ./app",
+    "start": "node ./dist/app",
     "predev": "tsc",
     "dev": "nodemon ./app",
     "lint": "eslint .",
