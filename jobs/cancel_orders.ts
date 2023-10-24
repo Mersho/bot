@@ -94,7 +94,7 @@ const cancelOrders = async (bot: Telegraf<MainContext>) => {
       await order.save();
       logger.info(`Order Id ${order.id} expired!`);
     }
-  } catch (error) {
+  } catch (error) { debugger
     logger.error(error);
   }
 };

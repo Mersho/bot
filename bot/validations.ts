@@ -53,7 +53,7 @@ const validateUser = async (ctx: MainContext, start: boolean) => {
     }
 
     return user;
-  } catch (error) {
+  } catch (error) { debugger
     logger.error(error);
     return false;
   }
@@ -73,7 +73,7 @@ const validateSuperAdmin = async (ctx: MainContext, id?: string) => {
     if (!user.admin) return await messages.notAuthorized(ctx, tgUserId.toString());
 
     return user;
-  } catch (error) {
+  } catch (error) { debugger
     logger.error(error);
     return false;
   }
@@ -101,7 +101,7 @@ const validateAdmin = async (ctx: MainContext, id?: string) => {
       return await messages.notAuthorized(ctx, tgUserId.toString());
 
     return user;
-  } catch (error) {
+  } catch (error) { debugger
     logger.error(error);
     return false;
   }
@@ -189,7 +189,7 @@ const validateSellOrder = async (ctx: MainContext) => {
       paymentMethod,
       priceMargin,
     };
-  } catch (error) {
+  } catch (error) { debugger
     logger.error(error);
     return false;
   }
@@ -275,7 +275,7 @@ const validateBuyOrder = async (ctx: MainContext) => {
       paymentMethod,
       priceMargin,
     };
-  } catch (error) {
+  } catch (error) { debugger
     logger.error(error);
     return false;
   }
@@ -321,7 +321,7 @@ const validateInvoice = async (ctx: MainContext, lnInvoice: string) => {
     }
 
     return invoice;
-  } catch (error) {
+  } catch (error) { debugger
     logger.error(error);
     logger.debug(lnInvoice);
     return false;
@@ -373,7 +373,7 @@ const isValidInvoice = async (ctx: MainContext, lnInvoice: string) => {
       success: true,
       invoice,
     };
-  } catch (error) {
+  } catch (error) { debugger
     await messages.invoiceInvalidMessage(ctx);
     return {
       success: false,
@@ -384,7 +384,7 @@ const isValidInvoice = async (ctx: MainContext, lnInvoice: string) => {
 const isOrderCreator = (user: UserDocument, order: IOrder) => {
   try {
     return user._id == order.creator_id;
-  } catch (error) {
+  } catch (error) { debugger
     logger.error(error);
     return false;
   }
@@ -413,7 +413,7 @@ const validateTakeSellOrder = async (ctx: MainContext, bot: Telegraf<MainContext
     }
 
     return true;
-  } catch (error) {
+  } catch (error) { debugger
     logger.error(error);
     return false;
   }
@@ -438,7 +438,7 @@ const validateTakeBuyOrder = async (ctx: MainContext, bot: Telegraf<MainContext>
       return false;
     }
     return true;
-  } catch (error) {
+  } catch (error) { debugger
     logger.error(error);
     return false;
   }
@@ -481,7 +481,7 @@ const validateReleaseOrder = async (ctx: MainContext, user: UserDocument, orderI
     }
 
     return order;
-  } catch (error) {
+  } catch (error) { debugger
     logger.error(error);
     return false;
   }
@@ -505,7 +505,7 @@ const validateDisputeOrder = async (ctx: MainContext, user: UserDocument, orderI
     }
 
     return order;
-  } catch (error) {
+  } catch (error) { debugger
     logger.error(error);
     return false;
   }
@@ -540,7 +540,7 @@ const validateFiatSentOrder = async (ctx: MainContext, user: UserDocument, order
     }
 
     return order;
-  } catch (error) {
+  } catch (error) { debugger
     await messages.customMessage(ctx, '/fiatsent <order_id>');
     return false;
   }
@@ -562,7 +562,7 @@ const validateSeller = async (ctx: MainContext, user: UserDocument) => {
     }
 
     return true;
-  } catch (error) {
+  } catch (error) { debugger
     logger.error(error);
     return false;
   }
@@ -585,7 +585,7 @@ const validateParams = async (ctx: MainContext, paramNumber: number, errOutputSt
     }
 
     return params.slice(1);
-  } catch (error) {
+  } catch (error) { debugger
     logger.error(error);
     return null;
   }
@@ -599,7 +599,7 @@ const validateObjectId = async (ctx: MainContext, id: string) => {
     }
 
     return true;
-  } catch (error) {
+  } catch (error) { debugger
     logger.error(error);
     return false;
   }
@@ -628,7 +628,7 @@ const validateUserWaitingOrder = async (ctx: MainContext, bot: Telegraf<MainCont
       return false;
     }
     return true;
-  } catch (error) {
+  } catch (error) { debugger
     logger.error(error);
     return false;
   }
@@ -641,7 +641,7 @@ const isBannedFromCommunity = async (user: UserDocument, communityId: string) =>
     const community = await Community.findOne({ _id: communityId });
     if (!community) return false;
     return community.banned_users.toObject().some((buser: ICommunity) => buser.id == user._id);
-  } catch (error) {
+  } catch (error) { debugger
     logger.error(error);
     return false;
   }

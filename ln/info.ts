@@ -5,7 +5,7 @@ import { logger } from '../logger';
 export const getInfo = async () => {
   try {
     return await lightning.getWalletInfo({ lnd });
-  } catch (error) {
+  } catch (error) { debugger
     logger.error(error);
   }
 };

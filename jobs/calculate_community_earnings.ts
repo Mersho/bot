@@ -36,7 +36,7 @@ const calculateEarnings = async () => {
         `New earnings for community Id: ${community.id} sats: ${amount} orders calculated: ${earnings[1]}`
       );
     }
-  } catch (error) {
+  } catch (error) { debugger
     const message = String(error);
     logger.error(`calculateEarnings catch error: ${message}`);
   }

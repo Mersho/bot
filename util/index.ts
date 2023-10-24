@@ -127,7 +127,7 @@ const handleReputationItems = async (
     }
     await buyer.save();
     await seller.save();
-  } catch (error) {
+  } catch (error) { debugger
     logger.error(error);
   }
 };
@@ -146,7 +146,7 @@ const getBtcFiatPrice = async (fiatCode: string, fiatAmount: number) => {
     const sats = (fiatAmount / response.data.btc) * 100000000;
 
     return Number(sats);
-  } catch (error) {
+  } catch (error) { debugger
     logger.error(error);
   }
 };
@@ -157,7 +157,7 @@ const getBtcExchangePrice = (fiatAmount: number, satsAmount: number) => {
     const feeRate = (satsPerBtc * fiatAmount) / satsAmount;
 
     return feeRate;
-  } catch (error) {
+  } catch (error) { debugger
     logger.error(error);
   }
 };
@@ -264,7 +264,7 @@ const isGroupAdmin = async (
       success: false,
       message: `@${user.username} is not an admin`,
     };
-  } catch (error) {
+  } catch (error) { debugger
     logger.error(error);
     return {
       success: false,
@@ -295,7 +295,7 @@ const deleteOrderFromChannel = async (order: IOrder, telegram: Telegram) => {
       chat_id: channel!,
       message_id: Number(order.tg_channel_message1!),
     });
-  } catch (error) {
+  } catch (error) { debugger
     logger.error(error);
   }
 };
@@ -395,7 +395,7 @@ const getDetailedOrder = (
     });
 
     return message;
-  } catch (error) {
+  } catch (error) { debugger
     logger.error(error);
   }
 };

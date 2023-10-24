@@ -127,7 +127,7 @@ const subscribeInvoice = async (
         await payToBuyer(bot, order);
       }
     });
-  } catch (error) {
+  } catch (error) { debugger
     logger.error('subscribeInvoice catch: ', error);
     return false;
   }

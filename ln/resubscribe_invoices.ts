@@ -30,7 +30,7 @@ const resubscribeInvoices = async (bot: Telegraf<MainContext>) => {
       }
     }
     logger.info(`Invoices resubscribed: ${invoicesReSubscribed}`);
-  } catch (error) {
+  } catch (error) { debugger
     logger.error(`ResuscribeInvoice catch: ${String(error)}`);
     return false;
   }

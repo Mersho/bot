@@ -123,7 +123,7 @@ const askForConfirmation = async (user: UserDocument, command: string) => {
     }
 
     return [];
-  } catch (error) {
+  } catch (error) { debugger
     logger.error(error);
     return null;
   }
@@ -203,7 +203,7 @@ const initialize = (
 
       messages.startMessage(ctx);
       await validateUser(ctx, true);
-    } catch (error) {
+    } catch (error) { debugger
       logger.error(error);
     }
   });
@@ -225,7 +225,7 @@ const initialize = (
         }
         await config.save();
         await ctx.reply(ctx.i18n.t('operation_successful'));
-      } catch (error) {
+      } catch (error) { debugger
         logger.error(error);
       }
     }
@@ -239,7 +239,7 @@ const initialize = (
       } else {
         next();
       }
-    } catch (error) {
+    } catch (error) { debugger
       logger.error(error);
     }
   });
@@ -277,7 +277,7 @@ const initialize = (
       } else {
         await release(ctx, orderId, ctx.user);
       }
-    } catch (error) {
+    } catch (error) { debugger
       logger.error(error);
     }
   });
@@ -345,7 +345,7 @@ const initialize = (
       await messages.successCancelOrderByAdminMessage(ctx, bot, seller, order);
       // we sent a private message to the buyer
       await messages.successCancelOrderByAdminMessage(ctx, bot, buyer, order);
-    } catch (error) {
+    } catch (error) { debugger
       logger.error(error);
     }
   });
@@ -371,7 +371,7 @@ const initialize = (
       } else {
         await cancelOrder(ctx, orderId, ctx.user);
       }
-    } catch (error) {
+    } catch (error) { debugger
       logger.error(error);
     }
   });
@@ -393,7 +393,7 @@ const initialize = (
       }
       // we sent a private message to the user
       await messages.successCancelAllOrdersMessage(ctx);
-    } catch (error) {
+    } catch (error) { debugger
       logger.error(error);
     }
   });
@@ -452,7 +452,7 @@ const initialize = (
       );
       // we sent a private message to the buyer
       await messages.successCompleteOrderByAdminMessage(ctx, bot, buyer, order);
-    } catch (error) {
+    } catch (error) { debugger
       logger.error(error);
     }
   });
@@ -471,7 +471,7 @@ const initialize = (
       if (buyer === null || seller === null)
         throw Error('buyer and/or seller were not found in DB');
       await messages.checkOrderMessage(ctx, order, buyer, seller);
-    } catch (error) {
+    } catch (error) { debugger
       logger.error(error);
     }
   });
@@ -497,7 +497,7 @@ const initialize = (
           invoice.is_canceled,
           invoice.is_held
         );
-      } catch (error) {
+      } catch (error) { debugger
         logger.error(error);
       }
     }
@@ -522,7 +522,7 @@ const initialize = (
   bot.command('help', userMiddleware, async (ctx: MainContext) => {
     try {
       await messages.helpMessage(ctx);
-    } catch (error) {
+    } catch (error) { debugger
       logger.error(error);
     }
   });
@@ -530,7 +530,7 @@ const initialize = (
   bot.command('disclaimer', userMiddleware, async (ctx: MainContext) => {
     try {
       await messages.disclaimerMessage(ctx);
-    } catch (error) {
+    } catch (error) { debugger
       logger.error(error);
     }
   });
@@ -555,7 +555,7 @@ const initialize = (
       } else {
         await fiatSent(ctx, orderId, ctx.user);
       }
-    } catch (error) {
+    } catch (error) { debugger
       logger.error(error);
     }
   });
@@ -599,7 +599,7 @@ const initialize = (
         await user.save();
       }
       await messages.userBannedMessage(ctx);
-    } catch (error) {
+    } catch (error) { debugger
       logger.error(error);
     }
   });
@@ -642,7 +642,7 @@ const initialize = (
         await user.save();
       }
       await messages.userUnBannedMessage(ctx);
-    } catch (error) {
+    } catch (error) { debugger
       logger.error(error);
     }
   });
@@ -668,7 +668,7 @@ const initialize = (
       ctx.user.lightning_address = lightningAddress;
       await ctx.user.save();
       await messages.successSetAddress(ctx);
-    } catch (error) {
+    } catch (error) { debugger
       logger.error(error);
     }
   });
@@ -745,7 +745,7 @@ const initialize = (
       }
 
       await order.save();
-    } catch (error) {
+    } catch (error) { debugger
       logger.error(error);
     }
   });
@@ -853,7 +853,7 @@ const initialize = (
       if (isPending) return;
 
       await payToBuyer(bot, order);
-    } catch (error) {
+    } catch (error) { debugger
       logger.error(error);
     }
   });
@@ -863,7 +863,7 @@ const initialize = (
       const currencies = getCurrenciesWithPrice();
 
       await messages.listCurrenciesResponse(ctx, currencies);
-    } catch (error) {
+    } catch (error) { debugger
       logger.error(error);
     }
   });
@@ -873,7 +873,7 @@ const initialize = (
       const config = await Config.findOne({});
       if (config === null) throw Error('Config was not found in DB');
       await messages.showInfoMessage(ctx, ctx.user, config);
-    } catch (error) {
+    } catch (error) { debugger
       logger.error(error);
     }
   });
@@ -886,7 +886,7 @@ const initialize = (
       ctx.user.show_username = show;
       await ctx.user.save();
       messages.updateUserSettingsMessage(ctx, 'showusername', show);
-    } catch (error) {
+    } catch (error) { debugger
       logger.error(error);
     }
   });
@@ -899,7 +899,7 @@ const initialize = (
       ctx.user.show_volume_traded = show;
       await ctx.user.save();
       messages.updateUserSettingsMessage(ctx, 'showvolume', show);
-    } catch (error) {
+    } catch (error) { debugger
       logger.error(error);
     }
   });
@@ -909,7 +909,7 @@ const initialize = (
       if (ctx.message?.chat.type !== 'private') return;
 
       await ctx.reply(ctx.i18n.t('not_wizard'));
-    } catch (error) {
+    } catch (error) { debugger
       logger.error(error);
     }
   });
@@ -927,7 +927,7 @@ const initialize = (
         message = ctx.i18n.t('unknown_command');
       }
       ctx.reply(message);
-    } catch (error) {
+    } catch (error) { debugger
       logger.error(error);
     }
   });

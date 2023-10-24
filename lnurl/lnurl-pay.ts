@@ -43,7 +43,7 @@ const existLightningAddress = async (address: string) => {
     }
 
     return true;
-  } catch (error) {
+  } catch (error) { debugger
     logger.info(`The ligthning address ${address} does not exist`);
     return false;
   }

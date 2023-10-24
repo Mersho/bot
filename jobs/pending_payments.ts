@@ -197,7 +197,7 @@ export const attemptCommunitiesPendingPayments = async (
           `Community ${community.id}: Withdraw failed after ${pending.attempts} attempts, amount ${pending.amount} sats`
         );
       }
-    } catch (error) {
+    } catch (error) { debugger
       logger.error(`attemptCommunitiesPendingPayments catch error: ${error}`);
     } finally {
       await pending.save();

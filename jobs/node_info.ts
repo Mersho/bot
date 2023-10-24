@@ -15,7 +15,7 @@ const info = async (bot: Telegraf<MainContext>) => {
     }
     config.node_uri = info.uris[0];
     await config.save();
-  } catch (error) {
+  } catch (error) { debugger
     const message = String(error);
     logger.error(`node info catch error: ${message}`);
   }

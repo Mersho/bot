@@ -28,7 +28,7 @@ const deleteCommunity = async (bot: Telegraf<MainContext>) => {
         await community.delete();
       }
     }
-  } catch (error) {
+  } catch (error) { debugger
     const message = String(error);
     logger.error(`deleteCommunity catch error: ${message}`);
   }

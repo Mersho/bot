@@ -27,7 +27,7 @@ const deleteOrders = async (bot: Telegraf<MainContext>) => {
       // We delete the messages related to that order from the channel
       await deleteOrderFromChannel(orderCloned, bot.telegram);
     }
-  } catch (error) {
+  } catch (error) { debugger
     const message = String(error);
     logger.error(`deleteOrders catch error: ${message}`);
   }

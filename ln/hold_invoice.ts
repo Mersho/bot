@@ -26,7 +26,7 @@ const createHoldInvoice = async (description: string, amount: number) => {
 
     // We sent back the response hash (id) to be used on testing
     return { request, hash: id, secret: secret.toString('hex') };
-  } catch (error) {
+  } catch (error) { debugger
     logger.error(error);
   }
 };
@@ -34,7 +34,7 @@ const createHoldInvoice = async (description: string, amount: number) => {
 const settleHoldInvoice = async ({ secret }: { secret: string }) => {
   try {
     await lightning.settleHodlInvoice({ lnd, secret });
-  } catch (error) {
+  } catch (error) { debugger
     logger.error(error);
   }
 };
@@ -42,7 +42,7 @@ const settleHoldInvoice = async ({ secret }: { secret: string }) => {
 const cancelHoldInvoice = async ({ hash }: { hash: string }) => {
   try {
     await lightning.cancelHodlInvoice({ lnd, id: hash });
-  } catch (error) {
+  } catch (error) { debugger
     logger.error(error);
   }
 };
@@ -50,7 +50,7 @@ const cancelHoldInvoice = async ({ hash }: { hash: string }) => {
 const getInvoice = async ({ hash }: { hash: string }) => {
   try {
     return await lightning.getInvoice({ lnd, id: hash });
-  } catch (error) {
+  } catch (error) { debugger
     logger.error(error);
   }
 };
