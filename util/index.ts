@@ -4,12 +4,12 @@ import { IOrder } from '../models/order';
 import { UserDocument } from '../models/user';
 import { IFiatCurrencies, IFiat } from './fiatModel';
 import { ILanguage, ILanguages } from './languagesModel';
-import { Telegram } from 'telegraf/typings/core/types/typegram';
 import axios from 'axios';
 import fiatJson from './fiat.json';
 import languagesJson from './languages.json';
 import { Order, Community } from '../models';
 import { logger } from '../logger';
+import { MainContext } from '../bot/start';
 const { I18n } = require('@grammyjs/i18n');
 
 const languages: ILanguages = languagesJson;
@@ -238,13 +238,13 @@ const secondsToTime = (secs: number) => {
 const isGroupAdmin = async (
   groupId: string,
   user: UserDocument,
-  telegram: Telegram
+  telegram: MainContext['telegram']
 ) => {
   try {
-    const member = await telegram.getChatMember({
-      chat_id: groupId,
-      user_id: Number(user.tg_id),
-    });
+    const member = await telegram.getChatMember(
+      groupId,
+      Number(user.tg_id),
+    );
     if (
       member &&
       (member.status === 'creator' || member.status === 'administrator')
@@ -273,10 +273,12 @@ const isGroupAdmin = async (
   }
 };
 
-const deleteOrderFromChannel = async (order: IOrder, telegram: Telegram) => {
+const deleteOrderFromChannel = async (order: IOrder, telegram: MainContext['telegram']) => {
   try {
     let channel = process.env.CHANNEL;
-    if (order.community_id) {
+    if (channel === undefined) throw Error("CHANNEL not found, please check .env file")
+    if (order.tg_channel_message1 === undefined) throw Error("order.tg_channel_message1 was not found in DB")
+    if (order.community_id !== undefined) {
       const community = await Community.findOne({ _id: order.community_id });
       if (!community) {
         return channel;
@@ -291,10 +293,10 @@ const deleteOrderFromChannel = async (order: IOrder, telegram: Telegram) => {
         }
       }
     }
-    await telegram.deleteMessage({
-      chat_id: channel!,
-      message_id: Number(order.tg_channel_message1!),
-    });
+    await telegram.deleteMessage(
+      channel,
+      Number(order.tg_channel_message1),
+    );
   } catch (error) { debugger
     logger.error(error);
   }
