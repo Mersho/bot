@@ -1,5 +1,5 @@
 import { randomBytes, createHash } from 'crypto';
-import * as lightning from 'lightning';
+import lightning from 'lightning';
 import { lnd } from './connect';
 import { logger } from '../logger';
 
