@@ -66,7 +66,7 @@ const {
   nodeInfo,
 } = require('../jobs');
 import { logger } from '../logger';
-import { ICommunity, IUsernameId } from '../models/community';
+import { IUsernameId } from '../models/community';
 
 export interface MainContext extends Context {
   match: Array<string> | null;
