@@ -13,7 +13,7 @@
     "format": "prettier --write '**/*.js'",
     "pretest": "tsc",
     "test": "export NODE_ENV=test && mocha --exit dist/tests/",
-    "copy-files": "cp ./locales/ ./dist/"
+    "copy-files": "cp -r ./locales/ ./dist/"
   },
   "license": "MIT",
   "dependencies": {
