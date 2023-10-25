@@ -53,6 +53,8 @@ jobs:
       - run: npm install @types/node @types/i18n
       - run: tsc
       - run: npm ci
+      - name: dirs
+        run: ls dist
       - name: Run tests
         env:
           DB_USER: ''
