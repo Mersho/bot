@@ -54,7 +54,8 @@ jobs:
       - run: tsc
       - run: npm ci
       - name: dirs
-        run: ls dist
+        run: |
+          ls dist/bot
       - name: Run tests
         env:
           DB_USER: ''
