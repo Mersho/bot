@@ -5,7 +5,7 @@
   "description": "P2P lightning network telegram bot",
   "main": "app.js",
   "scripts": {
-    "prestart": "tsc && npm copy-files",
+    "prestart": "tsc && npm run copy",
     "start": "node ./dist/app",
     "predev": "tsc",
     "dev": "nodemon ./app",
@@ -13,7 +13,7 @@
     "format": "prettier --write '**/*.js'",
     "pretest": "tsc",
     "test": "export NODE_ENV=test && mocha --exit dist/tests/",
-    "copy-files": "cp -r ./locales/ ./dist/"
+    "copy": "cp -r ./locales/ ./dist/"
   },
   "license": "MIT",
   "dependencies": {
