@@ -111,8 +111,11 @@ describe('Telegram bot test', () => {
     const client = server.getClient(token, { timeout: 5000 });
     const userStub = sinon.stub(User, 'findOne');
     userStub.returns(testUser);
+    console.log("__________log");
     const command = client.makeCommand('/listcurrencies');
+    console.log("++++log");
     const res = await client.sendCommand(command);
+    console.log("-----------log");
     expect(res.ok).to.be.equal(true);
     const updates = await client.getUpdates();
     console.log("updates:");
