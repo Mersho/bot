@@ -115,6 +115,8 @@ describe('Telegram bot test', () => {
     const res = await client.sendCommand(command);
     expect(res.ok).to.be.equal(true);
     const updates = await client.getUpdates();
+    console.log(updates);
+    console.log(updates.result[0]);
     userStub.restore();
     expect(updates.ok).to.be.equal(true);
     expect(
