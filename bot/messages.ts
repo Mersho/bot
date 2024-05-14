@@ -55,6 +55,14 @@ const initBotErrorMessage = async (ctx: MainContext, bot: Telegraf<MainContext>,
   });
 };
 
+const nonHandleErrorMessage = async (ctx: MainContext) => {
+  try {
+    await ctx.reply(ctx.i18n.t('non_handle_error'));
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
 const invoicePaymentRequestMessage = async (
   ctx: MainContext,
   user: UserDocument,
@@ -1635,6 +1643,7 @@ module.exports = {
   pendingBuyMessage,
   notOrderMessage,
   customMessage,
+  nonHandleErrorMessage,
   checkOrderMessage,
   mustBeValidCurrency,
   mustBeANumberOrRange,

@@ -39,6 +39,7 @@ const {
   beginDisputeMessage,
   notOrderMessage,
   customMessage,
+  nonHandleErrorMessage,
 } = require('./messages');
 
 module.exports = {
@@ -78,5 +79,6 @@ module.exports = {
   beginDisputeMessage,
   notOrderMessage,
   customMessage,
+  nonHandleErrorMessage,
   getNewRangeOrderPayload,
 };
