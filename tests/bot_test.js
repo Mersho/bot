@@ -116,6 +116,7 @@ describe('Telegram bot test', () => {
     console.log("++++log");
     const res = await client.sendCommand(command);
     console.log("-----------log");
+    console.log(res);
     expect(res.ok).to.be.equal(true);
     const updates = await client.getUpdates();
     console.log("updates:");
