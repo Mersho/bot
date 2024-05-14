@@ -60,6 +60,10 @@ jobs:
       - run: npm install @types/node @types/i18n
       - run: npx tsc
       - run: npm ci
+      - run: |
+            npm --version
+            node --version
+            tsc --version
       - name: Run tests
         env:
           DB_USER: ''
